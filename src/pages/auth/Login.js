@@ -30,7 +30,11 @@ const Login = () => {
     history.push("/");
     
   };
-
+  const login = (e) => {
+    setLoading(true);
+    localStorage.setItem("accessToken", "token");
+    history.push("/");
+  }
   const { errors, register, handleSubmit } = useForm();
 
   return (
@@ -117,7 +121,7 @@ const Login = () => {
                 </div>
               </FormGroup>
               <FormGroup>
-                <Button size="lg" className="btn-block" type="submit" color="primary">
+                <Button size="lg" className="btn-block" type="button" onClick={e => login(e)} color="primary">
                   {loading ? <Spinner size="sm" color="light" /> : "Sign in"}
                 </Button>
               </FormGroup>
@@ -126,7 +130,7 @@ const Login = () => {
               {" "}
               New on our platform? <Link to={`${process.env.PUBLIC_URL}/auth-register`}>Create an account</Link>
             </div>
-            <div className="text-center pt-4 pb-3">
+            {/* <div className="text-center pt-4 pb-3">
               <h6 className="overline-title overline-title-sap">
                 <span>OR</span>
               </h6>
@@ -154,7 +158,7 @@ const Login = () => {
                   Google
                 </a>
               </li>
-            </ul>
+            </ul> */}
           </PreviewCard>
         </Block>
         <AuthFooter />
