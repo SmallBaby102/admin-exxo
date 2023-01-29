@@ -9,7 +9,7 @@ import classNames from "classnames";
 const Layout = () => {
   //Sidebar
   const [mobileView, setMobileView] = useState();
-  const [visibility, setVisibility] = useState(false);
+  const [visibility, setVisibility] = useState(true);
   const [themeState] = useState({
     main: "default",
     sidebar: "white",

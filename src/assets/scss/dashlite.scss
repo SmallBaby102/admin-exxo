@@ -33,7 +33,7 @@ $rtl: false;
 @import "extend/bootstrap/extend";
 
 // Include Other Vendors
-// @import "vendors/bundle";
+@import "vendors/bundle";
 
 // Include Core Dashlite Style
 @import "core/style";

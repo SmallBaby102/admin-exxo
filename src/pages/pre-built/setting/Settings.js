@@ -66,7 +66,7 @@ const Settings = () => {
   }, [])
   return (
     <React.Fragment>
-      <Head title="Checkbox Radio" />
+      <Head title="Setting" />
       <Content page="component">
         <Block size="lg">
           <BlockHead>

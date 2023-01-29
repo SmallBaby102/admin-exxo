@@ -172,7 +172,7 @@ const KycListRegular = ({ history }) => {
 
   return (
     <React.Fragment>
-      <Head title="KYC Lists - Regular"></Head>
+      <Head title="KYC Lists - Admin"></Head>
       <Content>
         <BlockHead size="sm">
           <BlockBetween>

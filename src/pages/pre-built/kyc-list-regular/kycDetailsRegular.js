@@ -34,7 +34,7 @@ const KycDetailsRegular = ({ match }) => {
 
   return (
     <React.Fragment>
-      <Head title="KYC Details - Regular"></Head>
+      <Head title="KYC Details - Admin"></Head>
       {user && (
         <Content>
           <BlockHead size="sm">
