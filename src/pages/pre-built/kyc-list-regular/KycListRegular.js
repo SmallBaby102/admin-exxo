@@ -182,7 +182,7 @@ const KycListRegular = ({ history }) => {
                 <p>You have total {data.length} KYC documents.</p>
               </BlockDes>
             </BlockHeadContent>
-            <BlockHeadContent>
+            {/* <BlockHeadContent>
               <Button color="light" outline className="bg-white d-none d-sm-inline-flex">
                 <Icon name="download-cloud"></Icon>
                 <span>Export</span>
@@ -190,7 +190,7 @@ const KycListRegular = ({ history }) => {
               <Button color="light" outline className="btn-icon bg-white d-inline-flex d-sm-none">
                 <Icon name="download-cloud"></Icon>
               </Button>
-            </BlockHeadContent>
+            </BlockHeadContent> */}
           </BlockBetween>
         </BlockHead>
 
@@ -510,7 +510,8 @@ const KycListRegular = ({ history }) => {
                               <li>
                                 Front Side{" "}
                                 <a
-                                  href={`${process.env.REACT_APP_API_SERVER}/` + item.docUrl1.replace("public", "") }
+                                  // href={`${process.env.REACT_APP_API_SERVER}/` + item.docUrl1.replace("public/", "") }
+                                  href={`${process.env.REACT_APP_API_SERVER}/download/` + item.docUrl1.replace("public/", "") }
                                   download={"front.jpg"}
                                   className="popup"
                                 >
@@ -522,7 +523,7 @@ const KycListRegular = ({ history }) => {
                               <li>
                                 Back Side{" "}
                                 <a
-                                  href={`${process.env.REACT_APP_API_SERVER}/` + item.docUrl2.replace("public", "") }
+                                  href={`${process.env.REACT_APP_API_SERVER}/` + item.docUrl2.replace("public/", "") }
                                   download={"back.jpg"}
                                   className="popup"
                                 >
