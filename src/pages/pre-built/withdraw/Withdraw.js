@@ -489,7 +489,7 @@ const Withdraw = ({ history }) => {
                                   {item.email}{" "}
                                   <span
                                     className={`dot dot-${
-                                      item.status === "Approved"
+                                      (item.status === "Approved" || item.status === "DONE" )
                                         ? "success"
                                         : item.status === "Pending"
                                         ? "info"
@@ -516,60 +516,16 @@ const Withdraw = ({ history }) => {
                         <DataTableRow size="md">
                           <span
                             className={`tb-status text-${
-                              item.status === "Approved" ? "success" : item.status === "Pending" ? "info" : "danger"
+                              (item.status === "Approved" || item.status === "DONE") ? "success" : item.status === "Pending" ? "info" : "danger"
                             }`}
                           >
                             {item.status}
                           </span>
                         </DataTableRow>
-                        <DataTableRow className="nk-tb-col-tools">
+                        {
+                          item.status !== "DONE" &&
+                          <DataTableRow className="nk-tb-col-tools">
                           <ul className="nk-tb-actions gx-1">
-                            {/* {item.status === "Rejected" ?  
-                             <li className="nk-tb-action-hidden" onClick={() => onApproveClick(item._id)}>
-                                <TooltipComponent
-                                  tag="a"
-                                  containerClassName="btn btn-trigger btn-icon"
-                                  id={"approve" + item._id}
-                                  icon="check-fill-c"
-                                  direction="top"
-                                  text="Approve"
-                                />
-                              </li>
-                              : item.status === "Approved" ? (
-                              <li className="nk-tb-action-hidden" onClick={() => onRejectClick(item._id)}>
-                                <TooltipComponent
-                                  tag="a"
-                                  containerClassName="btn btn-trigger btn-icon"
-                                  id={"reject" + item._id}
-                                  icon="cross-fill-c"
-                                  direction="top"
-                                  text="Reject"
-                                />
-                              </li>
-                            ) : (
-                              <React.Fragment>
-                                <li className="nk-tb-action-hidden" onClick={() => onApproveClick(item._id)}>
-                                  <TooltipComponent
-                                    tag="a"
-                                    containerClassName="btn btn-trigger btn-icon"
-                                    id={"approve" + item._id}
-                                    icon="check-fill-c"
-                                    direction="top"
-                                    text="Approve"
-                                  />
-                                </li>
-                                <li className="nk-tb-action-hidden" onClick={() => onRejectClick(item._id)}>
-                                  <TooltipComponent
-                                    tag="a"
-                                    containerClassName="btn btn-trigger btn-icon"
-                                    id={"reject" + item._id}
-                                    icon="cross-fill-c"
-                                    direction="top"
-                                    text="Reject"
-                                  />
-                                </li>
-                              </React.Fragment>
-                            )} */}
                             <li>
                               <UncontrolledDropdown>
                                 <DropdownToggle tag="a" className="dropdown-toggle btn btn-icon btn-trigger">
@@ -635,6 +591,8 @@ const Withdraw = ({ history }) => {
                             </li>
                           </ul>
                         </DataTableRow>
+                        }
+                      
                       </DataTableItem>
                     );
                   })
