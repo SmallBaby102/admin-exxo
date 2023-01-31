@@ -19,7 +19,13 @@ import { toast } from "react-toastify";
 
 const Settings = () => {
   const [loading, setLoading] = useState(false);
+
+  const [adminWallet, setAdminWallet] = useState({
+    address: null,
+    privateKey: null,
+  });
   const [setting, setSetting] = useState({
+    usdtPrice: 1,
     usdtPrice: 1,
     // payment
     usdt: false,
@@ -33,8 +39,18 @@ const Settings = () => {
     if (loading) {
       return;
     }
+    let regex = /^0x[a-fA-F0-9]{40}$/;
+    if (adminWallet?.address.match(regex) === null) {
+      toast.warn("Invalid BSC address entered!");
+      return;
+    }
+    regex = /^[a-fA-F0-9]{64}$/;
+    if (adminWallet?.privateKey.match(regex) === null) {
+      toast.warn("Invalid BSC private key entered!");
+      return;
+    }
     setLoading(true);
-    axios.post(`${process.env.REACT_APP_API_SERVER}/api/other/setting`, { setting })
+    axios.post(`${process.env.REACT_APP_API_SERVER}/api/other/setting`, { setting, adminWallet })
     .then(res => {
         toast.success("Successfully updated!");
       setLoading(false);
@@ -48,6 +64,12 @@ const Settings = () => {
   const onChangeRate = e => {
     setSetting({ ...setting, usdtPrice: e.target.value});
   }
+  const onChangeAdminWalletAddress = e => {
+    setAdminWallet({ ...adminWallet, address: e.target.value});
+  }
+  const onChangeAdminWalletPrivateKey = e => {
+    setAdminWallet({ ...adminWallet, privateKey: e.target.value});
+  }
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_SERVER}/api/other/setting`)
     .then(res => {
@@ -58,7 +80,8 @@ const Settings = () => {
       } 
       console.log(payments)
       let usdtItem = res.data?.cryptoRates?.find(item => item.pair === "usdtPrice");
-      setSetting({ usdtPrice: usdtItem.rate, ...payments })
+      setSetting({ usdtPrice: usdtItem.rate, ...payments });
+      setAdminWallet({ address: res.data?.adminWallet?.address, privateKey: res.data?.adminWallet?.privateKey });
     })
     .catch(err => {
 
@@ -179,13 +202,32 @@ const Settings = () => {
           <PreviewCard>
             <Row className="gy-4">
               <div className="input-group">
-                <div className="p-1" >
+                <div className="p-1 col-md-3" >
                   USDT/USD
                 </div>
                 <input type="number" className="form-control" value={setting.usdtPrice} onChange={e => onChangeRate(e)} />
                 <div className="input-group-append">
                     <span className="input-group-text">$</span>
                 </div>
+            </div>
+            </Row>
+            <Row className="gy-4">
+              <div className="input-group">
+                <div className="p-1 col-md-3" >
+                  Admin Wallet Address
+                </div>
+                <input type="text" className="form-control" value={adminWallet.address} onChange={e => onChangeAdminWalletAddress(e)} />
+            </div>
+            </Row>
+            <Row className="gy-4">
+              <div className="input-group">
+                <div className="p-1 col-md-3" >
+                  Admin Wallet PrivateKey
+                </div>
+                <div className="input-group-append">
+                    <span className="input-group-text">0x</span>
+                </div>
+                <input type="text" className="form-control" value={adminWallet.privateKey} onChange={e => onChangeAdminWalletPrivateKey(e)} />
             </div>
             </Row>
           </PreviewCard>

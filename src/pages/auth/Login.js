@@ -17,10 +17,14 @@ import Head from "../../layout/head/Head";
 import AuthFooter from "./AuthFooter";
 import { useForm } from "react-hook-form";
 import { Link, useHistory } from "react-router-dom";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
   const [passState, setPassState] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [errorVal, setError] = useState("");
   const history = useHistory();
 
@@ -31,9 +35,22 @@ const Login = () => {
     
   };
   const login = (e) => {
+    if(email === "" || password === "" ){
+      toast.warn("Please fill all fields!");
+      return;
+    }
     setLoading(true);
-    localStorage.setItem("accessToken", "token");
-    history.push("/");
+    axios.post(`${process.env.REACT_APP_API_SERVER}/api/auth/admin-signin`, { email, password })
+    .then(res => {
+      setLoading(false);
+      localStorage.setItem("accessToken", res.data.accessToken);
+      history.push("/");
+    })
+    .catch(err => {
+      setLoading(false);
+      console.log(err)
+      toast.error(err.response.data.message);
+    })
   }
   const { errors, register, handleSubmit } = useForm();
 
@@ -54,7 +71,7 @@ const Login = () => {
               <BlockContent>
                 <BlockTitle tag="h4">Sign-In</BlockTitle>
                 <BlockDes>
-                  <p>Access Dashlite using your email and passcode.</p>
+                  <p>Access Admin panel using your email and passcode.</p>
                 </BlockDes>
               </BlockContent>
             </BlockHead>
@@ -78,8 +95,9 @@ const Login = () => {
                     type="text"
                     id="default-01"
                     name="name"
+                    onChange={e => setEmail(e.target.value)}
                     ref={register({ required: "This field is required" })}
-                    defaultValue="info@softnio.com"
+                    value={email}
                     placeholder="Enter your email address or username"
                     className="form-control-lg form-control"
                   />
@@ -112,7 +130,8 @@ const Login = () => {
                     type={passState ? "text" : "password"}
                     id="password"
                     name="passcode"
-                    defaultValue="123456"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
                     ref={register({ required: "This field is required" })}
                     placeholder="Enter your passcode"
                     className={`form-control-lg form-control ${passState ? "is-hidden" : "is-shown"}`}
@@ -126,10 +145,10 @@ const Login = () => {
                 </Button>
               </FormGroup>
             </Form>
-            <div className="form-note-s2 text-center pt-4">
+            {/* <div className="form-note-s2 text-center pt-4">
               {" "}
               New on our platform? <Link to={`${process.env.PUBLIC_URL}/auth-register`}>Create an account</Link>
-            </div>
+            </div> */}
             {/* <div className="text-center pt-4 pb-3">
               <h6 className="overline-title overline-title-sap">
                 <span>OR</span>
