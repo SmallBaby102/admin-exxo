@@ -29,9 +29,6 @@ const Login = () => {
   const history = useHistory();
 
   const onFormSubmit = (formData) => {
-    setLoading(true);
-    localStorage.setItem("accessToken", "token");
-    history.push("/");
     
   };
   const login = (e) => {
