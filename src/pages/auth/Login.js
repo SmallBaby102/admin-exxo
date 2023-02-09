@@ -19,8 +19,14 @@ import { useForm } from "react-hook-form";
 import { Link, useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
+import {
+  useDispatch,
+  useSelector,
+} from 'react-redux';
+import { setAdmin } from "../../actions"
 
 const Login = () => {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [passState, setPassState] = useState(false);
   const [email, setEmail] = useState("");
@@ -41,7 +47,9 @@ const Login = () => {
     .then(res => {
       setLoading(false);
       localStorage.setItem("accessToken", res.data.accessToken);
-      history.push("/");
+      localStorage.setItem("admin", JSON.stringify(res.data));
+      dispatch(setAdmin(res.data));
+      history.push("/"); 
     })
     .catch(err => {
       setLoading(false);

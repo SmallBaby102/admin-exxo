@@ -9,6 +9,7 @@ import ProductList from "../pages/pre-built/products/ProductList";
 import ProductDetails from "../pages/pre-built/products/ProductDetails";
 import Setting from "../pages/pre-built/setting/Settings";
 import Withdraw from "../pages/pre-built/withdraw/Withdraw";
+import Wallet from "../pages/pre-built/wallet/Wallet";
 
 const Pages = () => {
   useLayoutEffect(() => {
@@ -23,6 +24,7 @@ const Pages = () => {
         <Route exact path={`${process.env.PUBLIC_URL}/product-list`} component={ProductList}></Route>
         <Route exact path={`${process.env.PUBLIC_URL}/setting`} component={Setting}></Route>
         <Route exact path={`${process.env.PUBLIC_URL}/withdraw`} component={Withdraw}></Route>
+        <Route exact path={`${process.env.PUBLIC_URL}/wallet`} component={Wallet}></Route>
 
         <Route // context api added
           exact

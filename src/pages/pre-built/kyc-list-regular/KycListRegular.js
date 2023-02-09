@@ -36,6 +36,9 @@ import { kycData, filterStatus, filterDoc, bulkActionKycOptions } from "./KycDat
 import { findUpper } from "../../../utils/Utils";
 import { Link } from "react-router-dom";
 import axios from 'axios';
+import { useDispatch, useSelector } from "react-redux";
+import { setUsers } from "../../../actions";
+
 const KycListRegular = ({ history }) => {
   const [onSearch, setonSearch] = useState(true);
   const [onSearchText, setSearchText] = useState("");
@@ -47,7 +50,7 @@ const KycListRegular = ({ history }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemPerPage, setItemPerPage] = useState(10);
   const [sort, setSortState] = useState("");
-
+  const dispatch = useDispatch();
   // Sorting data
   const sortFunc = (params) => {
     let defaultData = data;
@@ -64,6 +67,7 @@ const KycListRegular = ({ history }) => {
     .then(res => {
       console.log("data", res.data)
       setData(res.data);
+      dispatch(setUsers(res.data));
     })
 
   }, [])
@@ -788,7 +792,7 @@ const KycListRegular = ({ history }) => {
               </Col>
               <Col lg={6}>
                 <span className="sub-text">Date</span>
-                <span className="caption-text"> {detail.submittedAt}</span>
+                <span className="caption-text"> {new Date(detail.submittedAt).toLocaleString() }</span>
               </Col>
               <Col lg={6}>
                 <span className="sub-text">Checked By</span>

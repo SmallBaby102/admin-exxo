@@ -7,9 +7,13 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Provider } from 'react-redux';
+import store from './store';
+
 const Error404Modern = lazy(() => import("./pages/error/404-modern"));
 
 ReactDOM.render(
+  <Provider store={ store }>
   <React.Fragment>
     <ToastContainer />
     <Suspense fallback={<div />}>
@@ -17,7 +21,8 @@ ReactDOM.render(
         <Route render={({ location }) => (location.state && location.state.is404 ? <Error404Modern /> : <App />)} />
       </Router>
     </Suspense>
-  </React.Fragment>,
+  </React.Fragment>
+  </Provider>,
   document.getElementById("root")
 );
 
