@@ -17,20 +17,21 @@ import {
 } from "../../../components/Component";
 import { findUpper } from "../../../utils/Utils";
 import { Link } from "react-router-dom";
+import { setChecking } from "../../../actions";
+import { useDispatch, useSelector } from "react-redux";
 
 const KycDetailsRegular = ({ match }) => {
-  const [data] = useState([]);
   const [user, setUser] = useState();
-
+  const users = useSelector(state => state.user.users);
   useEffect(() => {
     const id = match.params.id;
     if (id !== undefined || null || "") {
-      let spUser = data.find((item) => item._id === id);
+      let spUser = users.find((item) => item._id === id);
       setUser(spUser);
     } else {
-      setUser(data[0]);
+      // setUser(users[0]);
     }
-  }, [match.params.id, data]);
+  }, [match.params.id, users]);
 
   return (
     <React.Fragment>
@@ -49,7 +50,7 @@ const KycDetailsRegular = ({ match }) => {
                       Application ID: <span className="text-base">KID000844</span>
                     </li>
                     <li>
-                      Submitted At: <span className="text-base">{user.submittedAt}</span>
+                      Submitted At: <span className="text-base">{ new Date(user.submittedAt).toLocaleString()}</span>
                     </li>
                   </ul>
                 </BlockDes>
@@ -88,7 +89,7 @@ const KycDetailsRegular = ({ match }) => {
                     <li className="data-item">
                       <div className="data-col">
                         <div className="data-label">Submitted At</div>
-                        <div className="data-value">{user.date}</div>
+                        <div className="data-value">{new Date(user.submittedAt).toLocaleString()}</div>
                       </div>
                     </li>
                     <li className="data-item">
@@ -98,15 +99,15 @@ const KycDetailsRegular = ({ match }) => {
                           <Badge
                             size="sm"
                             color={
-                              user.status === "Approved"
+                              user.verification_status === "Approved"
                                 ? "outline-success"
-                                : user.status === "Pending"
+                                : user.verification_status === "Pending"
                                 ? "outline-info"
                                 : "outline-danger"
                             }
                             className="badge-dim"
                           >
-                            {user.status}
+                            {user.verification_status}
                           </Badge>
                         </div>
                       </div>
@@ -127,7 +128,7 @@ const KycDetailsRegular = ({ match }) => {
                     <li className="data-item">
                       <div className="data-col">
                         <div className="data-label">Last Checked At</div>
-                        <div className="data-value">{user.date}</div>
+                        <div className="data-value">{new Date(user.submittedAt).toLocaleString()}</div>
                       </div>
                     </li>
                   </ul>

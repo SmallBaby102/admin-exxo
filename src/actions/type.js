@@ -1,0 +1,5 @@
+export const SET_LOADING = 'USER ACTION SET LOADING';
+export const SET_CHECKING = 'USER ACTION SET CHECKING';
+export const SET_ADMIN = 'SET ADMIN';
+export const SET_USERS = 'SET_USERS';
+export const LOGOUT = 'USER ACTION LOGOUT';

@@ -3,6 +3,7 @@ import menu from "./MenuData";
 import { NavLink, Link } from "react-router-dom";
 import Icon from "../../components/icon/Icon";
 import classNames from "classnames";
+import { useSelector } from "react-redux";
 
 const MenuHeading = ({ heading }) => {
   return (
@@ -260,8 +261,15 @@ const MenuSub = ({ icon, link, text, sub, sidebarToggle, mobileView, ...props })
 
 const Menu = ({ sidebarToggle, mobileView }) => {
   const [data, setMenuData] = useState(menu);
+  const admin = useSelector(state => state.user.admin);
 
   useEffect(() => {
+    if (admin?.role !== "Super Admin") {
+      let temp  = data.filter(item => {
+        return item.text !== "Settings";
+      }) 
+      setMenuData(temp);
+    }
     data.forEach((item, index) => {
       if (item.panel) {
         let found = item.subPanel.find((sPanel) => process.env.PUBLIC_URL + sPanel.link === window.location.pathname);
