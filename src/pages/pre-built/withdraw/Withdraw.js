@@ -443,6 +443,9 @@ const Withdraw = ({ history }) => {
                   <span>Trading Account Id</span>
                 </DataTableRow>
                 <DataTableRow size="mb">
+                  <span>Address</span>
+                </DataTableRow>
+                <DataTableRow size="mb">
                   <span>Amount</span>
                 </DataTableRow>
                 <DataTableRow size="md">
@@ -503,6 +506,9 @@ const Withdraw = ({ history }) => {
                         </DataTableRow>
                         <DataTableRow size="mb">
                           <span className="tb-lead-sub">{ item.tradingAccountId }</span>
+                        </DataTableRow>
+                        <DataTableRow size="mb">
+                          <span className="tb-lead-sub">{item.address}</span>
                         </DataTableRow>
                         <DataTableRow size="mb">
                           <span className="tb-lead-sub">{item.amount}</span>
