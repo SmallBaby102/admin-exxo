@@ -16,10 +16,13 @@ import {
 import { Input, Row, Col, Spinner } from "reactstrap";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useHistory } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
 
 const Settings = () => {
   const [loading, setLoading] = useState(false);
-
+  const history = useHistory();
+  const admin = useSelector(state => state.user.admin);
   const [adminWallet, setAdminWallet] = useState({
     address: null,
     privateKey: null,
@@ -71,6 +74,10 @@ const Settings = () => {
     setAdminWallet({ ...adminWallet, privateKey: e.target.value});
   }
   useEffect(() => {
+    if(admin?.role !== "Super Admin"){
+      history.push("/kyc-list-regular");
+      return;
+    }
     axios.get(`${process.env.REACT_APP_API_SERVER}/api/other/setting`)
     .then(res => {
       let payments = {};

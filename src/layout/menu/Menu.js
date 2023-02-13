@@ -264,9 +264,9 @@ const Menu = ({ sidebarToggle, mobileView }) => {
   const admin = useSelector(state => state.user.admin);
 
   useEffect(() => {
-    if (admin?.role !== "Super Admin") {
+    if (admin && admin.role !== "Super Admin") {
       let temp  = data.filter(item => {
-        return item.text !== "Settings";
+        return item.text !== "Settings" && item.text !== "Administrators";
       }) 
       setMenuData(temp);
     }
