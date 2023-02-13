@@ -8,7 +8,7 @@ const Footer = () => {
         <div className="nk-footer-wrap">
           <div className="nk-footer-copyright">
             {" "}
-            &copy; 2022 Exxo. Created by <a href="https://softnio.com">bm</a>
+            &copy; 2022 Exxo@ Created by <a href="https://softnio.com">bm</a>
           </div>
           <div className="nk-footer-links">
             <ul className="nav nav-sm">
