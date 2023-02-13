@@ -111,7 +111,7 @@ const Administrator = ({ history }) => {
   useEffect(() => {
     if (onSearchText !== "") {
       const filteredObject = totalData.filter((item) => {
-        return (item.email.toLowerCase().includes(onSearchText.toLowerCase()) || item.tradingAccountId.toLowerCase().includes(onSearchText.toLowerCase()) || item.ethAddress.toLowerCase().includes(onSearchText.toLowerCase()));
+        return (item.email.toLowerCase().includes(onSearchText.toLowerCase()) || item.name.toLowerCase().includes(onSearchText.toLowerCase()) || item.role.toLowerCase().includes(onSearchText.toLowerCase()));
       });
       setData([...filteredObject]);
     } else {
@@ -251,9 +251,9 @@ const onFormSubmit = (form) => {
         <BlockHead size="sm">
           <BlockBetween>
             <BlockHeadContent>
-              <BlockTitle page>Trading Accounts</BlockTitle>
+              <BlockTitle page>Administrators</BlockTitle>
               <BlockDes className="text-soft">
-                <p>You have total {data.length} trading accounts.</p>
+                <p>You have total {data.length} administrators.</p>
               </BlockDes>
             </BlockHeadContent>
             {/* <BlockHeadContent>
