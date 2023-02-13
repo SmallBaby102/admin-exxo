@@ -4,10 +4,13 @@ import { Icon } from "../../../../components/Component";
 import { LinkList, LinkItem } from "../../../../components/links/Links";
 import UserAvatar from "../../../../components/user/UserAvatar";
 import { useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { findUpper } from "../../../../utils/Utils";
 
 const User = () => {
   const [open, setOpen] = useState(false);
   const toggle = () => setOpen((prevState) => !prevState);
+  const admin = useSelector(state => state.user.admin);
   const history = useHistory();
   const handleSignout = (e) => {
     e.preventDefault()
@@ -29,7 +32,7 @@ const User = () => {
           <UserAvatar icon="user-alt" className="sm" />
           <div className="user-info d-none d-md-block">
             <div className="user-status">Administrator</div>
-            <div className="user-name dropdown-indicator">Boris Markovic</div>
+            <div className="user-name dropdown-indicator">{admin?.name}</div>
           </div>
         </div>
       </DropdownToggle>
@@ -37,11 +40,11 @@ const User = () => {
         <div className="dropdown-inner user-card-wrap bg-lighter d-none d-md-block">
           <div className="user-card sm">
             <div className="user-avatar">
-              <span>BM</span>
+              <span>{findUpper(admin?.name)}</span>
             </div>
             <div className="user-info">
-              <span className="lead-text">Boris</span>
-              <span className="sub-text">borismarkovic102@gmail.com</span>
+              <span className="lead-text">{admin?.name}</span>
+              <span className="sub-text">{admin?.email}</span>
             </div>
           </div>
         </div>

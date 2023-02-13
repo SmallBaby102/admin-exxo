@@ -1,5 +1,5 @@
 import React, { Suspense, useLayoutEffect } from "react";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import { ProductContextProvider } from "../pages/pre-built/products/ProductContext";
 import { RedirectAs404 } from "../utils/Utils";
 import KycListRegular from "../pages/pre-built/kyc-list-regular/KycListRegular";
@@ -10,6 +10,7 @@ import ProductDetails from "../pages/pre-built/products/ProductDetails";
 import Setting from "../pages/pre-built/setting/Settings";
 import Withdraw from "../pages/pre-built/withdraw/Withdraw";
 import Wallet from "../pages/pre-built/wallet/Wallet";
+import Administrator from "../pages/pre-built/administrator/Administrator";
 
 const Pages = () => {
   useLayoutEffect(() => {
@@ -19,6 +20,7 @@ const Pages = () => {
   return (
     <Suspense fallback={<div />}>
       <Switch>
+        <Route exact path={`${process.env.PUBLIC_URL}/administrator`} component={Administrator}></Route>
         <Route exact path={`${process.env.PUBLIC_URL}/kyc-list-regular`} component={KycListRegular}></Route>
         <Route exact path={`${process.env.PUBLIC_URL}/kyc-details-regular/:id`} component={KycDetailsRegular}></Route>
         <Route exact path={`${process.env.PUBLIC_URL}/product-list`} component={ProductList}></Route>
@@ -44,7 +46,7 @@ const Pages = () => {
             </ProductContextProvider>
           )}
         ></Route>
-        <Route exact path={`${process.env.PUBLIC_URL}/`} component={KycListRegular}></Route>
+        <Route path="/" exact render={() => <Redirect to="/kyc-list-regular"/>}/>
         <Route component={RedirectAs404}></Route>
       </Switch>
     </Suspense>

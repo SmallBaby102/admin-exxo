@@ -1,5 +1,11 @@
 const menu = [
   {
+    icon: "shield",
+    text: "Administrators",
+    active: false,
+    link: "/administrator",
+  },
+  {
     icon: "file-docs",
     text: "Clients",
     active: false,
