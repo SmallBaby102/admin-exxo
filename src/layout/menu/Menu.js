@@ -279,7 +279,7 @@ const Menu = ({ sidebarToggle, mobileView }) => {
         }
       }
     });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [admin]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <ul className="nk-menu">
