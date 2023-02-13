@@ -265,7 +265,6 @@ const Menu = ({ sidebarToggle, mobileView }) => {
 
   useEffect(() => {
     if (admin?.role === "Super Admin") {
-      setMenuData([...temp]);
     } else {
       let temp  = data.filter(item => {
         return item.text !== "Settings" && item.text !== "Administrators";
