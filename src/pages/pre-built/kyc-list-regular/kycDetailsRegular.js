@@ -20,7 +20,7 @@ import { Link } from "react-router-dom";
 import { setChecking } from "../../../actions";
 import { useDispatch, useSelector } from "react-redux";
 
-const KycDetailsRegular = ({ match }) => {
+const KycDetailsRegular = ({ match, history }) => {
   const [user, setUser] = useState();
   const users = useSelector(state => state.user.users);
   useEffect(() => {
@@ -32,7 +32,29 @@ const KycDetailsRegular = ({ match }) => {
       // setUser(users[0]);
     }
   }, [match.params.id, users]);
+  const onApproveClick = () => {
+    axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/status/${user._id}`, { verification_status: "Approved"})
+    .then(res => {
+      console.log(res);
+      history.push("/kyc-list-regular");
+    })
+    .catch(e => {
+      console.log(e);
+    })
+  };
 
+  // function to change to reject property for an item
+  const onRejectClick = () => {
+    axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/status/${user._id}`, { verification_status: "Rejected"})
+    .then(res => {
+      history.push("/kyc-list-regular");
+      console.log(res);
+    })
+    .catch(e => {
+      console.log(e);
+    })
+    setData([...newData]);
+  };
   return (
     <React.Fragment>
       <Head title="KYC Details - Admin"></Head>
@@ -47,7 +69,7 @@ const KycDetailsRegular = ({ match }) => {
                 <BlockDes className="text-soft">
                   <ul className="list-inline">
                     <li>
-                      Application ID: <span className="text-base">KID000844</span>
+                      Application ID: <span className="text-base">{user._id}</span>
                     </li>
                     <li>
                       Submitted At: <span className="text-base">{ new Date(user.submittedAt).toLocaleString()}</span>
@@ -112,25 +134,6 @@ const KycDetailsRegular = ({ match }) => {
                         </div>
                       </div>
                     </li>
-                    <li className="data-item">
-                      <div className="data-col">
-                        <div className="data-label">Last Checked</div>
-                        <div className="data-value">
-                          <div className="user-card">
-                            <UserAvatar theme="orange-dim" text={findUpper(user.checked)}></UserAvatar>
-                            <div className="user-info">
-                              <span className="tb-lead">{user.checked}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                    <li className="data-item">
-                      <div className="data-col">
-                        <div className="data-label">Last Checked At</div>
-                        <div className="data-value">{new Date(user.submittedAt).toLocaleString()}</div>
-                      </div>
-                    </li>
                   </ul>
                 </Card>
                 <BlockHead>
@@ -145,25 +148,33 @@ const KycDetailsRegular = ({ match }) => {
                     <li className="data-item">
                       <div className="data-col">
                         <div className="data-label">Document Type</div>
-                        <div className="data-value">{user.doc}</div>
+                        <div className="data-value">{user.docType?.toUpperCase()}</div>
                       </div>
                     </li>
                     <li className="data-item">
                       <div className="data-col">
                         <div className="data-label">Front Side</div>
-                        <div className="data-value">{user.doc}</div>
+                        <div className="data-value">
+                          <a  href={`${process.env.REACT_APP_API_SERVER}/download/` + user.docUrl1?.replace("public", "") }
+                              download={"front.jpg"}
+                              className="popup"
+                            >
+                              <Icon name="download"></Icon>
+                          </a>
+                        </div>
                       </div>
                     </li>
                     <li className="data-item">
                       <div className="data-col">
                         <div className="data-label">Back Side</div>
-                        <div className="data-value">{user.doc}</div>
-                      </div>
-                    </li>
-                    <li className="data-item">
-                      <div className="data-col">
-                        <div className="data-label">Proof/Selfie</div>
-                        <div className="data-value">{user.doc}</div>
+                        <div className="data-value">
+                          <a href={`${process.env.REACT_APP_API_SERVER}/` + user.docUrl2?.replace("public/", "") }
+                                download={"back.jpg"}
+                                className="popup"
+                              >
+                                <Icon name="download"></Icon>
+                          </a>
+                        </div>
                       </div>
                     </li>
                   </ul>
@@ -194,56 +205,43 @@ const KycDetailsRegular = ({ match }) => {
                     <li className="data-item">
                       <div className="data-col">
                         <div className="data-label">Email Address</div>
-                        <div className="data-value">info@softnio.com</div>
+                        <div className="data-value">{user.email}</div>
                       </div>
                     </li>
                     <li className="data-item">
                       <div className="data-col">
                         <div className="data-label">Phone Number</div>
                         <div className="data-value text-soft">
-                          <em>Not available</em>
+                          {user.phone}
                         </div>
                       </div>
                     </li>
                     <li className="data-item">
                       <div className="data-col">
                         <div className="data-label">Date of Birth</div>
-                        <div className="data-value">28 Oct, 2015</div>
+                        <div className="data-value">{user.birthday}</div>
                       </div>
                     </li>
                     <li className="data-item">
                       <div className="data-col">
                         <div className="data-label">Country of Residence</div>
-                        <div className="data-value">Kenya</div>
+                        <div className="data-value">{user.country}</div>
                       </div>
                     </li>
                     <li className="data-item">
                       <div className="data-col">
                         <div className="data-label">Full Address</div>
-                        <div className="data-value">6516, Eldoret, Uasin Gishu, 30100</div>
+                        <div className="data-value">{user.address}</div>
                       </div>
                     </li>
                     <li className="data-item">
-                      <div className="data-col">
-                        <div className="data-label">Wallet Type</div>
-                        <div className="data-value">Bitcoin</div>
-                      </div>
-                    </li>
-                    <li className="data-item">
-                      <div className="data-col">
-                        <div className="data-label">Wallet Address</div>
-                        <div className="data-value text-break">1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX</div>
-                      </div>
-                    </li>
-                    <li className="data-item">
-                      <div className="data-col">
-                        <div className="data-label">Telegram</div>
-                        <div className="data-value">
-                          <span>@tokenlite</span>{" "}
-                          <a href="https://t.me/tokenlite">
-                            <Icon name="telegram"></Icon>
-                          </a>
-                        </div>
+                      <div className="">
+                        <Button type="button" color="primary" onClick={e => onApproveClick()}>
+                          Approve
+                        </Button>
+                        <Button type="button" color="light" onClick={e => onRejectClick() } className="ml-5" outline>
+                          Decline
+                        </Button>
                       </div>
                     </li>
                   </ul>
