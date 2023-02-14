@@ -515,7 +515,7 @@ const KycListRegular = ({ history }) => {
                                 Front Side{" "}
                                 <a
                                   // href={`${process.env.REACT_APP_API_SERVER}/` + item.docUrl1.replace("public/", "") }
-                                  href={`${process.env.REACT_APP_API_SERVER}/download/` + item.docUrl1.replace("public/", "") }
+                                  href={`${process.env.REACT_APP_API_SERVER}/download/` + item.docUrl1.replace("public", "") }
                                   download={"front.jpg"}
                                   className="popup"
                                 >
@@ -715,7 +715,7 @@ const KycListRegular = ({ history }) => {
                                             }}
                                           >
                                             <Icon name="na"></Icon>
-                                            <span>Suspend User</span>
+                                            <span>Reject User</span>
                                           </DropdownItem>
                                         </li>
                                       </React.Fragment>
