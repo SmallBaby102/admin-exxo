@@ -261,8 +261,7 @@ const MenuSub = ({ icon, link, text, sub, sidebarToggle, mobileView, ...props })
 
 const Menu = ({ sidebarToggle, mobileView }) => {
   const [data, setMenuData] = useState(menu);
-  const admin = useSelector(state => state.user.admin);
-
+  const admin = JSON.parse(localStorage.getItem("admin"));
   useEffect(() => {
     if (admin?.role === "Super Admin") {
     } else {
@@ -279,7 +278,7 @@ const Menu = ({ sidebarToggle, mobileView }) => {
         }
       }
     });
-  }, [admin]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <ul className="nk-menu">

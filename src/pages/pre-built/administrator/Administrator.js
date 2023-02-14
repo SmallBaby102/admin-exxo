@@ -55,7 +55,7 @@ let roleOptions = [
 ]
 const Administrator = ({ history }) => {
   const dispatch = useDispatch();
-  const admin = useSelector(state => state.user.admin);
+  const admin = JSON.parse(localStorage.getItem("admin"));
   const [onSearch, setOnSearch] = useState(true);
   const [onSearchText, setSearchText] = useState("");
   const [tablesm, updateTableSm] = useState(false);
@@ -160,11 +160,11 @@ const onFormSubmit = (form) => {
   axios.post(`${process.env.REACT_APP_API_SERVER}/api/auth/admin`, submittedData)
   .then(res => {
     toast.success("Created a new admin successfully!")
+    setData([submittedData, ...data]);
   })
   .catch(err => {
     toast.error(err.response.data.message)
   })
-  setData([submittedData, ...data]);
   setView({ open: false });
   resetForm();
 };
@@ -191,11 +191,11 @@ const onFormSubmit = (form) => {
     axios.delete(`${process.env.REACT_APP_API_SERVER}/api/auth/admin`, { data: removeData })
     .then(res => {
       toast.success("Deleted a new admin successfully!")
+      setData([...defaultData]);
     })
     .catch(err => {
       toast.error(err.response.data.message)
     })
-    setData([...defaultData]);
   };
   const onEditSubmit = () => {
     let submittedData;
