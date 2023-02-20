@@ -516,7 +516,6 @@ const KycListRegular = ({ history }) => {
                                 <a
                                   // href={`${process.env.REACT_APP_API_SERVER}/` + item.docUrl1.replace("public/", "") }
                                   href={`${process.env.REACT_APP_API_SERVER}/download/` + item.docUrl1.replace("public", "") }
-                                  download={"front.jpg"}
                                   className="popup"
                                 >
                                   <Icon name="download"></Icon>
@@ -528,7 +527,17 @@ const KycListRegular = ({ history }) => {
                                 Back Side{" "}
                                 <a
                                   href={`${process.env.REACT_APP_API_SERVER}/` + item.docUrl2.replace("public/", "") }
-                                  download={"back.jpg"}
+                                  className="popup"
+                                >
+                                  <Icon name="download"></Icon>
+                                </a>
+                              </li>
+                            )}
+                            {item.docUrl3 && (
+                              <li>
+                                Other{" "}
+                                <a
+                                  href={`${process.env.REACT_APP_API_SERVER}/` + item.docUrl3.replace("public/", "") }
                                   className="popup"
                                 >
                                   <Icon name="download"></Icon>
@@ -572,7 +581,7 @@ const KycListRegular = ({ history }) => {
                         </DataTableRow> */}
                         <DataTableRow className="nk-tb-col-tools">
                           <ul className="nk-tb-actions gx-1">
-                            <li
+                            {/* <li
                               className="nk-tb-action-hidden"
                               onClick={() => {
                                 loadDetail(item._id);
@@ -587,7 +596,7 @@ const KycListRegular = ({ history }) => {
                                 direction="top"
                                 text="Quick View"
                               />
-                            </li>
+                            </li> */}
                             {/* {item.verification_status === "Rejected" ?  
                              <li className="nk-tb-action-hidden" onClick={() => onApproveClick(item._id)}>
                                 <TooltipComponent
@@ -641,7 +650,7 @@ const KycListRegular = ({ history }) => {
                                 </DropdownToggle>
                                 <DropdownMenu right>
                                   <ul className="link-list-opt no-bdr">
-                                    <li>
+                                    {/* <li>
                                       <DropdownItem
                                         tag="a"
                                         href="#view"
@@ -654,7 +663,7 @@ const KycListRegular = ({ history }) => {
                                         <Icon name="eye"></Icon>
                                         <span>Quick View</span>
                                       </DropdownItem>
-                                    </li>
+                                    </li> */}
                                     <li>
                                       <DropdownItem
                                         tag="a"

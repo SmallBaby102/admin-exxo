@@ -70,7 +70,7 @@ const Layout = () => {
           <div className="nk-wrap">
             <Header sidebarToggle={toggleSidebar} fixed setVisibility={setVisibility} theme={themeState.header} />
             <Pages />
-            <Footer />
+            {/* <Footer /> */}
           </div>
         </div>
       </div>

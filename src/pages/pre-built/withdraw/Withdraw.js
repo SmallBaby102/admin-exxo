@@ -39,6 +39,7 @@ const Withdraw = ({ history }) => {
   const [onSearch, setonSearch] = useState(true);
   const [onSearchText, setSearchText] = useState("");
   const [tablesm, updateTableSm] = useState(false);
+  const [originalData, setOriginalData] = useState([]);
   const [data, setData] = useState([]);
   const [viewModal, setViewModal] = useState(false);
   const [detail, setDetail] = useState({});
@@ -46,41 +47,101 @@ const Withdraw = ({ history }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemPerPage, setItemPerPage] = useState(10);
   const [sort, setSortState] = useState("");
+  const [sortKind, setSortKind] = useState("submittedAt");
+  const [sortOrder, setSortOrder] = useState("desc");
 
-  // Sorting data
-  const sortFunc = (params) => {
-    let defaultData = data;
-    if (params === "asc") {
-      let sortedData = defaultData.sort((a, b) => a.fullname.localeCompare(b.fullname));
-      setData([...sortedData]);
-    } else if (params === "dsc") {
-      let sortedData = defaultData.sort((a, b) => b.fullname.localeCompare(a.fullname));
-      setData([...sortedData]);
-    }
-  };
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_SERVER}/api/other/withdraw`)
     .then(res => {
       console.log("data", res.data)
       setData(res.data);
-    })
+      setOriginalData(res.data);
+    });
+  }, []);
 
-  }, [])
+  // Sorting data
+  const sortFunc = (params) => {
+    let defaultData = data;
+    if (params === "asc") {
+      let sortedData = defaultData.sort((a, b) => a.tradingAccountId.localeCompare(b.tradingAccountId));
+      setData([...sortedData]);
+    } else if (params === "dsc") {
+      let sortedData = defaultData.sort((a, b) => b.tradingAccountId.localeCompare(a.tradingAccountId));
+      setData([...sortedData]);
+    }
+  };  
+
+  useEffect(() => {
+    console.log(sortKind + "****************" + sortOrder);
+
+    let defaultData = data;
+    if (sortOrder === "asc") {
+      let sortedData = [];
+      if ( sortKind === "email" ) {
+        sortedData = defaultData.sort((a, b) => a.email.localeCompare(b.email));
+      } else if ( sortKind === "amount" ) {
+        sortedData = defaultData.sort((a, b) => a.amount.localeCompare(b.amount));
+      } else if ( sortKind === "address" ) {
+        sortedData = defaultData.sort((a, b) => a.address.localeCompare(b.address));
+      } else if ( sortKind === "currency" ) {
+        sortedData = defaultData.sort((a, b) => a.currency.localeCompare(b.currency));
+      } else if ( sortKind === "tradingAccountId" ) {
+        sortedData = defaultData.sort((a, b) => a.tradingAccountId.localeCompare(b.tradingAccountId));
+      } else if ( sortKind === "method" ) {
+        sortedData = defaultData.sort((a, b) => a.method.localeCompare(b.method));
+      } else if ( sortKind === "submittedAt" ) {
+        sortedData = defaultData.sort((a, b) => a.submittedAt.localeCompare(b.submittedAt));
+      } else if ( sortKind === "status" ) {
+        sortedData = defaultData.sort((a, b) => a.status.localeCompare(b.status));
+      }       
+      setData([...sortedData]);
+    } else if (sortOrder === "desc") {
+      let sortedData = [];
+      if ( sortKind === "email" ) {
+        sortedData = defaultData.sort((a, b) => b.email.localeCompare(a.email));
+      } else if ( sortKind === "amount" ) {
+        sortedData = defaultData.sort((a, b) => b.amount.localeCompare(a.amount));
+      } else if ( sortKind === "address" ) {
+        sortedData = defaultData.sort((a, b) => b.address.localeCompare(a.address));
+      } else if ( sortKind === "currency" ) {
+        sortedData = defaultData.sort((a, b) => b.currency.localeCompare(a.currency));
+      } else if ( sortKind === "tradingAccountId" ) {
+        sortedData = defaultData.sort((a, b) => b.tradingAccountId.localeCompare(a.tradingAccountId));
+      } else if ( sortKind === "method" ) {
+        sortedData = defaultData.sort((a, b) => b.method.localeCompare(a.method));
+      } else if ( sortKind === "submittedAt" ) {
+        sortedData = defaultData.sort((a, b) => b.submittedAt.localeCompare(a.submittedAt));
+      } else if ( sortKind === "status" ) {
+        sortedData = defaultData.sort((a, b) => b.status.localeCompare(a.status));
+      } 
+      setData([...sortedData]);
+    }
+  }, [sortKind, sortOrder]);
+
+  // sort param change function 
+  const onSortHeaderClick = (e, kind) => {
+    if ( kind === sortKind ) setSortOrder(sortOrder==="desc"?"asc":"desc");
+    setSortKind(kind);        
+  }
+
   // Changing state value when searching name
-  // useEffect(() => {
-  //   if (onSearchText !== "") {
-  //     const filteredObject = kycData.filter((item) => {
-  //       return item.fullname.toLowerCase().includes(onSearchText.toLowerCase());
-  //     });
-  //     setData([...filteredObject]);
-  //   } else {
-  //     setData([...kycData]);
-  //   }
-  // }, [onSearchText]);
+  useEffect(() => {
+    let kycData = originalData;
+    if (onSearchText !== "") {
+      const filteredObject = kycData.filter((item) => {
+        return item.tradingAccountId.toLowerCase().includes(onSearchText.toLowerCase()) || 
+                item.email.toLowerCase().includes(onSearchText.toLowerCase()) || 
+                item.address.toLowerCase().includes(onSearchText.toLowerCase());
+      });
+      setData([...filteredObject]);
+    } else {
+      setData([...kycData]);
+    }
+  }, [onSearchText]);
 
-  // onChange function for searching name
+  // onChange function for searching key
   const onFilterChange = (e) => {
-    setSearchText(e.target.value);
+    setSearchText(e.target.value);    
   };
 
   // function to declare the state change
@@ -412,7 +473,7 @@ const Withdraw = ({ history }) => {
                     <input
                       type="text"
                       className="border-transparent form-focus-none form-control"
-                      placeholder="Search by user or email"
+                      placeholder="Search by trading account, email address or wallet address"
                       value={onSearchText}
                       onChange={(e) => onFilterChange(e)}
                     />
@@ -436,27 +497,30 @@ const Withdraw = ({ history }) => {
                     <label className="custom-control-label" htmlFor="uid_1"></label>
                   </div>
                 </DataTableRow>
-                <DataTableRow>
+                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "email"); }}>
                   <span>User</span>
-                </DataTableRow>
-                <DataTableRow size="mb">
+                </div>
+                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "tradingAccountId"); }}>
                   <span>Trading Account Id</span>
-                </DataTableRow>
-                <DataTableRow size="mb">
+                </div>
+                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "address"); }}>
                   <span>Address</span>
-                </DataTableRow>
-                <DataTableRow size="mb">
+                </div>
+                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "amount"); }}>
                   <span>Amount</span>
-                </DataTableRow>
-                <DataTableRow size="md">
+                </div>
+                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "currency"); }}>
                   <span>Currency</span>
-                </DataTableRow>
-                <DataTableRow size="lg">
+                </div>
+                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "method"); }}>
+                  <span>Withdraw Method</span>
+                </div>
+                <div className="nk-tb-col tb-col-lg" onClick={(e) => { onSortHeaderClick(e, "submittedAt"); }}>
                   <span>Submitted</span>
-                </DataTableRow>
-                <DataTableRow size="md">
+                </div>
+                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "status"); }}>
                   <span>Status</span>
-                </DataTableRow>
+                </div>
                 {/* <DataTableRow size="lg">
                   <span>Checked by</span>
                 </DataTableRow> */}
@@ -481,6 +545,7 @@ const Withdraw = ({ history }) => {
                           </div>
                         </DataTableRow>
                         <DataTableRow>
+                          <Link to={`${process.env.PUBLIC_URL}/withdraw_detail/${item._id}`}>
                             <div className="user-card">
                               <UserAvatar
                                 theme={"primary"}
@@ -503,18 +568,22 @@ const Withdraw = ({ history }) => {
                                 <span>{item.email}</span>
                               </div>
                             </div>
+                          </Link>
                         </DataTableRow>
                         <DataTableRow size="mb">
                           <span className="tb-lead-sub">{ item.tradingAccountId }</span>
                         </DataTableRow>
-                        <DataTableRow size="mb">
-                          <span className="tb-lead-sub">{item.address}</span>
+                        <DataTableRow size="mb" >
+                          <span className="tb-lead-sub" style={{ overflowWrap: "anywhere"}}>{item.address}</span>
                         </DataTableRow>
                         <DataTableRow size="mb">
                           <span className="tb-lead-sub">{item.amount}</span>
                         </DataTableRow>
                         <DataTableRow size="md">
                             <span className="tb-lead-sub">{item.currency}</span>
+                        </DataTableRow>
+                        <DataTableRow size="md">
+                            <span className="tb-lead-sub">{item.method}</span>
                         </DataTableRow>
                         <DataTableRow size="lg">
                           <span className="tb-date">{ new Date(item.submittedAt).toLocaleString() }</span>
