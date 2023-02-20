@@ -31,7 +31,7 @@ const PrivateRoute = ({ exact, component: Component, ...rest }) => {
           return;
       } else {
         if(!admin){
-          const temp =  JSON.parse(localStorage.getItem("admin"));
+          const temp = JSON.parse(localStorage.getItem("admin"));
           dispatch(setAdmin(temp));
         }
       }
@@ -43,7 +43,6 @@ const PrivateRoute = ({ exact, component: Component, ...rest }) => {
   }, [ location.pathname ])
   return ( // eslint-disable-line
   <LoadingOverlay active={checking} spinner>
-
     <Route
       exact={exact ? true : false}
       rest

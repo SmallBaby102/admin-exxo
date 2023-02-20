@@ -17,23 +17,33 @@ import {
 } from "../../../components/Component";
 import { findUpper } from "../../../utils/Utils";
 import { Link } from "react-router-dom";
-import { setChecking } from "../../../actions";
+import { setChecking, setUsers } from "../../../actions";
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 
 const KycDetailsRegular = ({ match, history }) => {
   const [user, setUser] = useState();
+  const [remark, setRemark] = useState("");
+  const dispatch = useDispatch();
   const users = useSelector(state => state.user.users);
   useEffect(() => {
     const id = match.params.id;
     if (id !== undefined || null || "") {
       let spUser = users.find((item) => item._id === id);
       setUser(spUser);
+      setRemark(spUser?.remark);
     } else {
       // setUser(users[0]);
     }
+    if(users.length < 1) {
+      axios.get(`${process.env.REACT_APP_API_SERVER}/api/user/users`)
+      .then(res => {
+        dispatch(setUsers(res.data));
+      })
+    }
   }, [match.params.id, users]);
   const onApproveClick = () => {
-    axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/status/${user._id}`, { verification_status: "Approved"})
+    axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/status/${user._id}`, { verification_status: "Approved", remark })
     .then(res => {
       console.log(res);
       history.push("/kyc-list-regular");
@@ -45,7 +55,7 @@ const KycDetailsRegular = ({ match, history }) => {
 
   // function to change to reject property for an item
   const onRejectClick = () => {
-    axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/status/${user._id}`, { verification_status: "Rejected"})
+    axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/status/${user._id}`, { verification_status: "Rejected", remark })
     .then(res => {
       history.push("/kyc-list-regular");
       console.log(res);
@@ -53,7 +63,6 @@ const KycDetailsRegular = ({ match, history }) => {
     .catch(e => {
       console.log(e);
     })
-    setData([...newData]);
   };
   return (
     <React.Fragment>
@@ -155,8 +164,7 @@ const KycDetailsRegular = ({ match, history }) => {
                       <div className="data-col">
                         <div className="data-label">Front Side</div>
                         <div className="data-value">
-                          <a  href={`${process.env.REACT_APP_API_SERVER}/download/` + user.docUrl1?.replace("public", "") }
-                              download={"front.jpg"}
+                          <a  href={`${process.env.REACT_APP_API_SERVER}/download` + user.docUrl1?.replace("public", "") }
                               className="popup"
                             >
                               <Icon name="download"></Icon>
@@ -164,12 +172,13 @@ const KycDetailsRegular = ({ match, history }) => {
                         </div>
                       </div>
                     </li>
-                    <li className="data-item">
+                    {
+                      user?.docType !== "passport" &&
+                      <li className="data-item">
                       <div className="data-col">
                         <div className="data-label">Back Side</div>
                         <div className="data-value">
-                          <a href={`${process.env.REACT_APP_API_SERVER}/` + user.docUrl2?.replace("public/", "") }
-                                download={"back.jpg"}
+                          <a href={`${process.env.REACT_APP_API_SERVER}/` + user.docUrl2?.replace("public", "") }
                                 className="popup"
                               >
                                 <Icon name="download"></Icon>
@@ -177,6 +186,20 @@ const KycDetailsRegular = ({ match, history }) => {
                         </div>
                       </div>
                     </li>
+                    }
+                       <li className="data-item">
+                      <div className="data-col">
+                        <div className="data-label">Other</div>
+                        <div className="data-value">
+                          <a  href={`${process.env.REACT_APP_API_SERVER}/download` + user.docUrl3?.replace("public", "") }
+                              className="popup"
+                            >
+                              <Icon name="download"></Icon>
+                          </a>
+                        </div>
+                      </div>
+                    </li>
+                    
                   </ul>
                 </Card>
               </Col>
@@ -230,8 +253,20 @@ const KycDetailsRegular = ({ match, history }) => {
                     </li>
                     <li className="data-item">
                       <div className="data-col">
+                        <div className="data-label">City</div>
+                        <div className="data-value">{user.city}</div>
+                      </div>
+                    </li>
+                    <li className="data-item">
+                      <div className="data-col">
                         <div className="data-label">Full Address</div>
                         <div className="data-value">{user.address}</div>
+                      </div>
+                    </li>
+                    <li className="data-item">
+                      <div className="data-col">
+                        <div className="data-label">Remark</div>
+                        <textarea multiple cols="50" value={remark} onChange={e => setRemark(e.target.value)} placeholder="Please write the reason of decline."></textarea>
                       </div>
                     </li>
                     <li className="data-item">

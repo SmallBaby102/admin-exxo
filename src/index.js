@@ -9,6 +9,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Provider } from 'react-redux';
 import store from './store';
+import "./assets/css/custom.css"
 
 const Error404Modern = lazy(() => import("./pages/error/404-modern"));
 

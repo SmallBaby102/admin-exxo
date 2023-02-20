@@ -27,6 +27,10 @@ const Settings = () => {
     address: null,
     privateKey: null,
   });
+  const [sysSetting, setSysSetting] = useState({
+    telegram: null
+  });
+
   const [setting, setSetting] = useState({
     usdtPrice: 1,
     usdtPrice: 1,
@@ -53,7 +57,7 @@ const Settings = () => {
       return;
     }
     setLoading(true);
-    axios.post(`${process.env.REACT_APP_API_SERVER}/api/other/setting`, { setting, adminWallet })
+    axios.post(`${process.env.REACT_APP_API_SERVER}/api/other/setting`, { setting, adminWallet, sysSetting })
     .then(res => {
         toast.success("Successfully updated!");
       setLoading(false);
@@ -63,18 +67,26 @@ const Settings = () => {
       setLoading(false);
     })
   
+  } 
+
+  const onChangeSysSettingTelegram = e => {
+    setSysSetting({ ...setting, telegram: e.target.value});
   }
+
   const onChangeRate = e => {
     setSetting({ ...setting, usdtPrice: e.target.value});
   }
+
   const onChangeAdminWalletAddress = e => {
     setAdminWallet({ ...adminWallet, address: e.target.value});
   }
+
   const onChangeAdminWalletPrivateKey = e => {
     setAdminWallet({ ...adminWallet, privateKey: e.target.value});
   }
+
   useEffect(() => {
-    if(admin?.role !== "Super Admin"){
+    if(admin?.role !== "Super Admin") {
       history.push("/kyc-list-regular");
       return;
     }
@@ -89,6 +101,7 @@ const Settings = () => {
       let usdtItem = res.data?.cryptoRates?.find(item => item.pair === "usdtPrice");
       setSetting({ usdtPrice: usdtItem.rate, ...payments });
       setAdminWallet({ address: res.data?.adminWallet?.address, privateKey: res.data?.adminWallet?.privateKey });
+      setSysSetting({telegram: res.data.sysSetting.telegram});
     })
     .catch(err => {
 
@@ -235,6 +248,26 @@ const Settings = () => {
                     <span className="input-group-text">0x</span>
                 </div>
                 <input type="text" className="form-control" value={adminWallet.privateKey} onChange={e => onChangeAdminWalletPrivateKey(e)} />
+            </div>
+            </Row>
+          </PreviewCard>
+        </Block>
+        <Block size="lg">
+          <BlockHead>
+            <BlockHeadContent>
+              <BlockTitle tag="h5">Setting</BlockTitle>
+              <p>
+                You can set system configiration.
+              </p>
+            </BlockHeadContent>
+          </BlockHead>
+          <PreviewCard>
+            <Row className="gy-4">
+              <div className="input-group">
+                <div className="p-1 col-md-3" >
+                  Telegram Link
+                </div>
+                <input type="text" className="form-control" value={sysSetting.telegram} onChange={e => onChangeSysSettingTelegram(e)} />
             </div>
             </Row>
           </PreviewCard>
