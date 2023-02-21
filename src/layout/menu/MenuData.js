@@ -24,6 +24,12 @@ const menu = [
     link: "/withdraw",
   },
   {
+    icon: "file-docs",
+    text: "Deposit History",
+    active: false,
+    link: "/deposit",
+  },
+  {
     icon: "users",
     text: "Trading Accounts",
     active: false,

@@ -32,14 +32,10 @@ import {
   PaginationComponent,
   RSelect,
 } from "../../../components/Component";
-import { kycData, filterStatus, filterDoc, bulkActionKycOptions } from "./KycData";
 import { findUpper } from "../../../utils/Utils";
 import { Link } from "react-router-dom";
 import axios from 'axios';
-import { useDispatch, useSelector } from "react-redux";
-import { setUsers } from "../../../actions";
-
-const KycListRegular = ({ history }) => {
+const DepositReport = ({ history }) => {
   const [onSearch, setonSearch] = useState(true);
   const [onSearchText, setSearchText] = useState("");
   const [tablesm, updateTableSm] = useState(false);
@@ -50,7 +46,7 @@ const KycListRegular = ({ history }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemPerPage, setItemPerPage] = useState(10);
   const [sort, setSortState] = useState("");
-  const dispatch = useDispatch();
+
   // Sorting data
   const sortFunc = (params) => {
     let defaultData = data;
@@ -63,11 +59,10 @@ const KycListRegular = ({ history }) => {
     }
   };
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_API_SERVER}/api/user/users`)
+    axios.get(`${process.env.REACT_APP_API_SERVER}/api/other/deposit`)
     .then(res => {
       console.log("data", res.data)
       setData(res.data);
-      dispatch(setUsers(res.data));
     })
 
   }, [])
@@ -115,7 +110,7 @@ const KycListRegular = ({ history }) => {
   const onActionClick = (e) => {
     if (actionText === "Reject") {
       let newData = data.map((item) => {
-        if (item.check === true) item.verification_status = "Rejected";
+        if (item.check === true) item.status = "Rejected";
         return item;
       });
       setData([...newData]);
@@ -130,10 +125,10 @@ const KycListRegular = ({ history }) => {
   const onApproveClick = (id) => {
     let newData = data;
     let index = newData.findIndex((item) => item._id === id);
-    newData[index].verification_status = "Approved";
+    newData[index].status = "Approved";
     console.log(newData);
     setData([...newData]);
-    axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/status/${id}`, { verification_status: "Approved"})
+    axios.post(`${process.env.REACT_APP_API_SERVER}/api/other/deposit`, { id, status: "Approved"})
     .then(res => {
       console.log(res);
     })
@@ -146,8 +141,8 @@ const KycListRegular = ({ history }) => {
   const onRejectClick = (id) => {
     let newData = data;
     let index = newData.findIndex((item) => item._id === id);
-    newData[index].verification_status = "Rejected";
-    axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/status/${id}`, { verification_status: "Rejected"})
+    newData[index].status = "Rejected";
+    axios.post(`${process.env.REACT_APP_API_SERVER}/api/other/deposit`, { id, status: "Rejected" })
     .then(res => {
       console.log(res);
     })
@@ -176,14 +171,14 @@ const KycListRegular = ({ history }) => {
 
   return (
     <React.Fragment>
-      <Head title="KYC Lists - Admin"></Head>
+      <Head title="Deposit History"></Head>
       <Content>
         <BlockHead size="sm">
           <BlockBetween>
             <BlockHeadContent>
-              <BlockTitle page>KYC Documents</BlockTitle>
+              <BlockTitle page>Deposit History</BlockTitle>
               <BlockDes className="text-soft">
-                <p>You have total {data.length} KYC documents.</p>
+                <p>You have total {data.length} Deposit History.</p>
               </BlockDes>
             </BlockHeadContent>
             {/* <BlockHeadContent>
@@ -444,11 +439,20 @@ const KycListRegular = ({ history }) => {
                 <DataTableRow>
                   <span>User</span>
                 </DataTableRow>
-                <DataTableRow size="mb">
-                  <span>Doc Type</span>
+                <DataTableRow size="mb" >
+                  <span>Trading Account Id</span>
                 </DataTableRow>
-                <DataTableRow size="md">
-                  <span>Documents</span>
+                <DataTableRow size="mb">
+                  <span>Amount</span>
+                </DataTableRow>
+                <DataTableRow size="mb">
+                  <span>Transfer Amount</span>
+                </DataTableRow>
+                <DataTableRow size="mb">
+                  <span>Code</span>
+                </DataTableRow>
+                <DataTableRow size="mb">
+                  <span>Transfer Code</span>
                 </DataTableRow>
                 <DataTableRow size="lg">
                   <span>Submitted</span>
@@ -480,21 +484,20 @@ const KycListRegular = ({ history }) => {
                           </div>
                         </DataTableRow>
                         <DataTableRow>
-                          <Link to={`${process.env.PUBLIC_URL}/kyc-details-regular/${item._id}`}>
                             <div className="user-card">
                               <UserAvatar
                                 theme={"primary"}
-                                text={findUpper(item.fullname)}
+                                text={findUpper(item.email)}
                                 image={item.image}
                               ></UserAvatar>
                               <div className="user-info">
                                 <span className="tb-lead">
-                                  {item.fullname}{" "}
+                                  {item.email}{" "}
                                   <span
                                     className={`dot dot-${
-                                      item.verification_status === "Approved"
+                                      (item.status === "Approved" || item.status === "DONE" )
                                         ? "success"
-                                        : item.verification_status === "Pending"
+                                        : item.status === "Pending"
                                         ? "info"
                                         : "danger"
                                     } d-md-none ml-1`}
@@ -503,146 +506,38 @@ const KycListRegular = ({ history }) => {
                                 <span>{item.email}</span>
                               </div>
                             </div>
-                          </Link>
                         </DataTableRow>
                         <DataTableRow size="mb">
-                          <span className="tb-lead-sub">{item.docType?.toUpperCase()}</span>
+                          <span className="tb-lead-sub">{ item.tradingAccountId }</span>
                         </DataTableRow>
-                        <DataTableRow size="md">
-                          <ul className="list-inline list-download">
-                            {item.docUrl1 && (
-                              <li>
-                                Front Side{" "}
-                                <a
-                                  // href={`${process.env.REACT_APP_API_SERVER}/` + item.docUrl1.replace("public/", "") }
-                                  href={`${process.env.REACT_APP_API_SERVER}/download` + item.docUrl1.replace("public", "") }
-                                  className="popup"
-                                >
-                                  <Icon name="download"></Icon>
-                                </a>
-                              </li>
-                            )}
-                            {item.docUrl2 && (
-                              <li>
-                                Back Side{" "}
-                                <a
-                                  href={`${process.env.REACT_APP_API_SERVER}/download` + item.docUrl2.replace("public", "") }
-                                  className="popup"
-                                >
-                                  <Icon name="download"></Icon>
-                                </a>
-                              </li>
-                            )}
-                            {item.docUrl3 && (
-                              <li>
-                                Other{" "}
-                                <a
-                                  href={`${process.env.REACT_APP_API_SERVER}/download` + item.docUrl3.replace("public", "") }
-                                  className="popup"
-                                >
-                                  <Icon name="download"></Icon>
-                                </a>
-                              </li>
-                            )}
-                          </ul>
+                        <DataTableRow size="mb">
+                          <span className="tb-lead-sub">{item.amount}</span>
+                        </DataTableRow>
+                        <DataTableRow size="mb">
+                          <span className="tb-lead-sub">{parseFloat(item.transfer_amount)}</span>
+                        </DataTableRow>
+                        <DataTableRow size="mb">
+                          <span className="tb-lead-sub">{item.code}</span>
+                        </DataTableRow>
+                        <DataTableRow size="mb">
+                          <span className="tb-lead-sub">{item.transfer_code}</span>
                         </DataTableRow>
                         <DataTableRow size="lg">
-                          <span className="tb-date">{ new Date(item.submittedAt).toLocaleString() }</span>
+                          <span className="tb-date">{ new Date(item.createdAt).toLocaleString() }</span>
                         </DataTableRow>
                         <DataTableRow size="md">
                           <span
                             className={`tb-status text-${
-                              item.verification_status === "Approved" ? "success" : item.verification_status === "Pending" ? "info" : "danger"
+                              (item.status === "Approved" || item.status === "DONE") ? "success" : item.status === "Pending" ? "info" : "danger"
                             }`}
                           >
-                            {item.verification_status}
+                            {item.status}
                           </span>
-                          {/* {item.verification_status !== "Pending" && (
-                            <TooltipComponent
-                              icon="info"
-                              direction="top"
-                              id={item._id + "pendingless"}
-                              text={`${item.verification_status} at Dec 18, 2019 01:02 am`}
-                            ></TooltipComponent>
-                          )}
-                          {!item.verification_status === "Pending" && (
-                            <span>
-                              <TooltipComponent icon="info" direction="top" text={item.date} id={item._id} />
-                            </span>
-                          )} */}
                         </DataTableRow>
-                        {/* <DataTableRow size="lg">
-                          <div className="user-card">
-                            <UserAvatar theme="orange-dim" size="xs" text={(item.checked)}></UserAvatar>
-                            <div className="user-name">
-                              <span className="tb-lead">{item.checked} </span>
-                            </div>
-                          </div>
-                        </DataTableRow> */}
-                        <DataTableRow className="nk-tb-col-tools">
+                        {/* {
+                          item.status !== "DONE" &&
+                          <DataTableRow className="nk-tb-col-tools">
                           <ul className="nk-tb-actions gx-1">
-                            {/* <li
-                              className="nk-tb-action-hidden"
-                              onClick={() => {
-                                loadDetail(item._id);
-                                setViewModal(true);
-                              }}
-                            >
-                              <TooltipComponent
-                                tag="a"
-                                containerClassName="btn btn-trigger btn-icon"
-                                id={"view" + item._id}
-                                icon="eye-fill"
-                                direction="top"
-                                text="Quick View"
-                              />
-                            </li> */}
-                            {/* {item.verification_status === "Rejected" ?  
-                             <li className="nk-tb-action-hidden" onClick={() => onApproveClick(item._id)}>
-                                <TooltipComponent
-                                  tag="a"
-                                  containerClassName="btn btn-trigger btn-icon"
-                                  id={"approve" + item._id}
-                                  icon="check-fill-c"
-                                  direction="top"
-                                  text="Approve"
-                                />
-                              </li>
-                              : item.verification_status === "Approved" ? (
-                              <li className="nk-tb-action-hidden" onClick={() => onRejectClick(item._id)}>
-                                <TooltipComponent
-                                  tag="a"
-                                  containerClassName="btn btn-trigger btn-icon"
-                                  id={"reject" + item._id}
-                                  icon="cross-fill-c"
-                                  direction="top"
-                                  text="Reject"
-                                />
-                              </li>
-                            ) : (
-                              <React.Fragment>
-                                <li className="nk-tb-action-hidden" onClick={() => onApproveClick(item._id)}>
-                                  <TooltipComponent
-                                    tag="a"
-                                    containerClassName="btn btn-trigger btn-icon"
-                                    id={"approve" + item._id}
-                                    icon="check-fill-c"
-                                    direction="top"
-                                    text="Approve"
-                                  />
-                                </li>
-                                <li className="nk-tb-action-hidden" onClick={() => onRejectClick(item._id)}>
-                                  <TooltipComponent
-                                    tag="a"
-                                    containerClassName="btn btn-trigger btn-icon"
-                                    id={"reject" + item._id}
-                                    icon="cross-fill-c"
-                                    direction="top"
-                                    text="Reject"
-                                  />
-                                </li>
-                              </React.Fragment>
-                            )} */}
                             <li>
                               <UncontrolledDropdown>
                                 <DropdownToggle tag="a" className="dropdown-toggle btn btn-icon btn-trigger">
@@ -650,34 +545,7 @@ const KycListRegular = ({ history }) => {
                                 </DropdownToggle>
                                 <DropdownMenu right>
                                   <ul className="link-list-opt no-bdr">
-                                    {/* <li>
-                                      <DropdownItem
-                                        tag="a"
-                                        href="#view"
-                                        onClick={(ev) => {
-                                          ev.preventDefault();
-                                          loadDetail(item._id);
-                                          setViewModal(true);
-                                        }}
-                                      >
-                                        <Icon name="eye"></Icon>
-                                        <span>Quick View</span>
-                                      </DropdownItem>
-                                    </li> */}
-                                    <li>
-                                      <DropdownItem
-                                        tag="a"
-                                        href="#details"
-                                        onClick={(ev) => {
-                                          ev.preventDefault();
-                                          history.push(`${process.env.PUBLIC_URL}/kyc-details-regular/${item._id}`);
-                                        }}
-                                      >
-                                        <Icon name="focus"></Icon>
-                                        <span>View Details</span>
-                                      </DropdownItem>
-                                    </li>
-                                    {item.verification_status === "Rejected" ? <li onClick={() => onApproveClick(item._id)}>
+                                    {item.status === "Rejected" ? <li onClick={() => onApproveClick(item._id)}>
                                           <DropdownItem
                                             tag="a"
                                             href="#approve"
@@ -688,7 +556,7 @@ const KycListRegular = ({ history }) => {
                                             <Icon name="check-thick"></Icon>
                                             <span>Approve</span>
                                           </DropdownItem>
-                                        </li> : item.verification_status === "Approved" ? (
+                                        </li> : item.status === "Approved" ? (
                                       <li onClick={() => onRejectClick(item._id)}>
                                         <DropdownItem
                                           tag="a"
@@ -698,7 +566,7 @@ const KycListRegular = ({ history }) => {
                                           }}
                                         >
                                           <Icon name="na"></Icon>
-                                          <span>Reject User</span>
+                                          <span>Reject</span>
                                         </DropdownItem>
                                       </li>
                                     ) : (
@@ -724,7 +592,7 @@ const KycListRegular = ({ history }) => {
                                             }}
                                           >
                                             <Icon name="na"></Icon>
-                                            <span>Reject User</span>
+                                            <span>Reject</span>
                                           </DropdownItem>
                                         </li>
                                       </React.Fragment>
@@ -735,6 +603,8 @@ const KycListRegular = ({ history }) => {
                             </li>
                           </ul>
                         </DataTableRow>
+                        } */}
+                      
                       </DataTableItem>
                     );
                   })
@@ -758,60 +628,7 @@ const KycListRegular = ({ history }) => {
           </DataTable>
         </Block>
       </Content>
-
-      <Modal isOpen={viewModal} toggle={() => setViewModal(false)} className="modal-dialog-centered" size="lg">
-        <ModalBody>
-          <a
-            href="#cancel"
-            onClick={(ev) => {
-              ev.preventDefault();
-              setViewModal(false);
-            }}
-            className="close"
-          >
-            <Icon name="cross-sm"></Icon>
-          </a>
-          <div className="nk-modal-head">
-            <h4 className="nk-modal-title title">
-              KYC Details <small className="text-primary"> {detail._id}</small>
-            </h4>
-          </div>
-          <div className="nk-tnx-details mt-sm-3">
-            <Row className="gy-3">
-              <Col lg={6}>
-                <span className="sub-text"> ID</span>
-                <span className="caption-text">{detail._id}</span>
-              </Col>
-              <Col lg={6}>
-                <span className="sub-text">Applicant Name </span>
-                <span className="caption-text text-break">{detail.fullname}</span>
-              </Col>
-              <Col lg={6}>
-                <span className="sub-text">Document Type </span>
-                <span className="caption-text">{detail?.docType?.toUpperCase()}</span>
-              </Col>
-              <Col lg={6}>
-                <span className="sub-text">Status</span>
-                <Badge
-                  color={detail.verification_status === "Approved" ? "success" : detail.verification_status === "Pending" ? "info" : "danger"}
-                  size="md"
-                >
-                  {detail.verification_status}
-                </Badge>
-              </Col>
-              <Col lg={6}>
-                <span className="sub-text">Date</span>
-                <span className="caption-text"> {new Date(detail.submittedAt).toLocaleString() }</span>
-              </Col>
-              <Col lg={6}>
-                <span className="sub-text">Checked By</span>
-                <span className="caption-text"> {detail.checked}</span>
-              </Col>
-            </Row>
-          </div>
-        </ModalBody>
-      </Modal>
     </React.Fragment>
   );
 };
-export default KycListRegular;
+export default DepositReport;
