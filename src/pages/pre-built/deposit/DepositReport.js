@@ -40,6 +40,7 @@ const DepositReport = ({ history }) => {
   const [onSearchText, setSearchText] = useState("");
   const [tablesm, updateTableSm] = useState(false);
   const [data, setData] = useState([]);
+  const [originalData, setOriginalData] = useState([]);
   const [viewModal, setViewModal] = useState(false);
   const [detail, setDetail] = useState({});
   const [actionText, setActionText] = useState("");
@@ -51,10 +52,10 @@ const DepositReport = ({ history }) => {
   const sortFunc = (params) => {
     let defaultData = data;
     if (params === "asc") {
-      let sortedData = defaultData.sort((a, b) => a.fullname.localeCompare(b.fullname));
+      let sortedData = defaultData.sort((a, b) => a.email.localeCompare(b.email));
       setData([...sortedData]);
     } else if (params === "dsc") {
-      let sortedData = defaultData.sort((a, b) => b.fullname.localeCompare(a.fullname));
+      let sortedData = defaultData.sort((a, b) => b.email.localeCompare(a.email));
       setData([...sortedData]);
     }
   };
@@ -63,20 +64,25 @@ const DepositReport = ({ history }) => {
     .then(res => {
       console.log("data", res.data)
       setData(res.data);
+      setOriginalData(res.data);
     })
 
   }, [])
   // Changing state value when searching name
-  // useEffect(() => {
-  //   if (onSearchText !== "") {
-  //     const filteredObject = kycData.filter((item) => {
-  //       return item.fullname.toLowerCase().includes(onSearchText.toLowerCase());
-  //     });
-  //     setData([...filteredObject]);
-  //   } else {
-  //     setData([...kycData]);
-  //   }
-  // }, [onSearchText]);
+  useEffect(() => {
+    let kycData = originalData;
+    if (onSearchText !== "") {
+      const filteredObject = kycData.filter((item) => {
+        return item.tradingAccountId?.toLowerCase().includes(onSearchText.toLowerCase()) || 
+        item.email?.toLowerCase().includes(onSearchText.toLowerCase()) || 
+        item.transfer_code?.toLowerCase().includes(onSearchText.toLowerCase()) ||
+        item.code?.toLowerCase().includes(onSearchText.toLowerCase());
+      });
+      setData([...filteredObject]);
+    } else {
+      setData([...kycData]);
+    }
+  }, [onSearchText]);
 
   // onChange function for searching name
   const onFilterChange = (e) => {
