@@ -32,7 +32,6 @@ import {
   PaginationComponent,
   RSelect,
 } from "../../../components/Component";
-import { kycData, filterStatus, filterDoc, bulkActionKycOptions } from "./KycData";
 import { findUpper } from "../../../utils/Utils";
 import { Link } from "react-router-dom";
 import axios from 'axios';
@@ -44,6 +43,7 @@ const KycListRegular = ({ history }) => {
   const [onSearchText, setSearchText] = useState("");
   const [tablesm, updateTableSm] = useState(false);
   const [data, setData] = useState([]);
+  const [originalData, setOriginalData] = useState([]);
   const [viewModal, setViewModal] = useState(false);
   const [detail, setDetail] = useState({});
   const [actionText, setActionText] = useState("");
@@ -68,20 +68,26 @@ const KycListRegular = ({ history }) => {
       console.log("data", res.data)
       setData(res.data);
       dispatch(setUsers(res.data));
+      setOriginalData(res.data);
     })
 
   }, [])
   // Changing state value when searching name
-  // useEffect(() => {
-  //   if (onSearchText !== "") {
-  //     const filteredObject = kycData.filter((item) => {
-  //       return item.fullname.toLowerCase().includes(onSearchText.toLowerCase());
-  //     });
-  //     setData([...filteredObject]);
-  //   } else {
-  //     setData([...kycData]);
-  //   }
-  // }, [onSearchText]);
+  useEffect(() => {
+    let kycData = originalData;
+    console.log("onSearchText", onSearchText)
+    if (onSearchText !== "") {
+      const filteredObject = kycData.filter((item) => {
+        console.log("item", item)
+        return item.fullname?.toLowerCase().includes(onSearchText.toLowerCase()) ||
+        item.email?.toLowerCase().includes(onSearchText.toLowerCase()) || 
+        item.docType?.toLowerCase().includes(onSearchText.toLowerCase());
+      });
+      setData([...filteredObject]);
+    } else {
+      setData([...kycData]);
+    }
+  }, [onSearchText]);
 
   // onChange function for searching name
   const onFilterChange = (e) => {

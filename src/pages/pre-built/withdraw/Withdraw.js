@@ -129,9 +129,9 @@ const Withdraw = ({ history }) => {
     let kycData = originalData;
     if (onSearchText !== "") {
       const filteredObject = kycData.filter((item) => {
-        return item.tradingAccountId.toLowerCase().includes(onSearchText.toLowerCase()) || 
-                item.email.toLowerCase().includes(onSearchText.toLowerCase()) || 
-                item.address.toLowerCase().includes(onSearchText.toLowerCase());
+        return item.tradingAccountId?.toLowerCase().includes(onSearchText.toLowerCase()) || 
+                item.email?.toLowerCase().includes(onSearchText.toLowerCase()) || 
+                item.address?.toLowerCase().includes(onSearchText.toLowerCase());
       });
       setData([...filteredObject]);
     } else {
