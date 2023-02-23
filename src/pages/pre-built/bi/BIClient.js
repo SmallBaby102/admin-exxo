@@ -33,9 +33,9 @@ import {
   RSelect,
 } from "../../../components/Component";
 import { findUpper } from "../../../utils/Utils";
-import { Link } from "react-router-dom";
 import axios from 'axios';
-const Withdraw = ({ history }) => {
+import { toast } from "react-toastify";
+const BIClient = ({ history }) => {
   const [onSearch, setonSearch] = useState(true);
   const [onSearchText, setSearchText] = useState("");
   const [tablesm, updateTableSm] = useState(false);
@@ -51,7 +51,7 @@ const Withdraw = ({ history }) => {
   const [sortOrder, setSortOrder] = useState("desc");
 
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_API_SERVER}/api/other/withdraw`)
+    axios.get(`${process.env.REACT_APP_API_SERVER}/api/user/ib-clients`)
     .then(res => {
       console.log("data", res.data)
       setData(res.data);
@@ -72,46 +72,33 @@ const Withdraw = ({ history }) => {
   };  
 
   useEffect(() => {
-
     let defaultData = data;
     if (sortOrder === "asc") {
       let sortedData = [];
       if ( sortKind === "email" ) {
         sortedData = defaultData.sort((a, b) => a.email.localeCompare(b.email));
-      } else if ( sortKind === "amount" ) {
-        sortedData = defaultData.sort((a, b) => a.amount.localeCompare(b.amount));
-      } else if ( sortKind === "address" ) {
-        sortedData = defaultData.sort((a, b) => a.address.localeCompare(b.address));
-      } else if ( sortKind === "currency" ) {
-        sortedData = defaultData.sort((a, b) => a.currency.localeCompare(b.currency));
-      } else if ( sortKind === "tradingAccountId" ) {
-        sortedData = defaultData.sort((a, b) => a.tradingAccountId.localeCompare(b.tradingAccountId));
-      } else if ( sortKind === "method" ) {
-        sortedData = defaultData.sort((a, b) => a.method.localeCompare(b.method));
-      } else if ( sortKind === "submittedAt" ) {
-        sortedData = defaultData.sort((a, b) => a.submittedAt.localeCompare(b.submittedAt));
-      } else if ( sortKind === "status" ) {
-        sortedData = defaultData.sort((a, b) => a.status.localeCompare(b.status));
-      }       
+      } else if ( sortKind === "phone" ) {
+        sortedData = defaultData.sort((a, b) => a.phone.localeCompare(b.phone));
+      } else if ( sortKind === "accountUuid" ) {
+        sortedData = defaultData.sort((a, b) => a.accountUuid.localeCompare(b.accountUuid));
+      } else if ( sortKind === "ibStatus" ) {
+        sortedData = defaultData.sort((a, b) => a.ibStatus.localeCompare(b.ibStatus));
+      } else if ( sortKind === "parentTradingAccountUuid" ) {
+        sortedData = defaultData.sort((a, b) => a.tradingAccountId.localeCompare(b.parentTradingAccountUuid));
+      }     
       setData([...sortedData]);
     } else if (sortOrder === "desc") {
       let sortedData = [];
       if ( sortKind === "email" ) {
         sortedData = defaultData.sort((a, b) => b.email.localeCompare(a.email));
-      } else if ( sortKind === "amount" ) {
-        sortedData = defaultData.sort((a, b) => b.amount.localeCompare(a.amount));
-      } else if ( sortKind === "address" ) {
-        sortedData = defaultData.sort((a, b) => b.address.localeCompare(a.address));
-      } else if ( sortKind === "currency" ) {
-        sortedData = defaultData.sort((a, b) => b.currency.localeCompare(a.currency));
-      } else if ( sortKind === "tradingAccountId" ) {
-        sortedData = defaultData.sort((a, b) => b.tradingAccountId.localeCompare(a.tradingAccountId));
-      } else if ( sortKind === "method" ) {
-        sortedData = defaultData.sort((a, b) => b.method.localeCompare(a.method));
-      } else if ( sortKind === "submittedAt" ) {
-        sortedData = defaultData.sort((a, b) => b.submittedAt.localeCompare(a.submittedAt));
-      } else if ( sortKind === "status" ) {
-        sortedData = defaultData.sort((a, b) => b.status.localeCompare(a.status));
+      } else if ( sortKind === "phone" ) {
+        sortedData = defaultData.sort((a, b) => b.phone.localeCompare(a.phone));
+      } else if ( sortKind === "accountUuid" ) {
+        sortedData = defaultData.sort((a, b) => b.accountUuid.localeCompare(a.accountUuid));
+      } else if ( sortKind === "ibStatus" ) {
+        sortedData = defaultData.sort((a, b) => b.ibStatus.localeCompare(a.ibStatus));
+      } else if ( sortKind === "parentTradingAccountUuid" ) {
+        sortedData = defaultData.sort((a, b) => b.parentTradingAccountUuid.localeCompare(a.parentTradingAccountUuid));
       } 
       setData([...sortedData]);
     }
@@ -128,9 +115,8 @@ const Withdraw = ({ history }) => {
     let kycData = originalData;
     if (onSearchText !== "") {
       const filteredObject = kycData.filter((item) => {
-        return item.tradingAccountId?.toLowerCase().includes(onSearchText.toLowerCase()) || 
-                item.email?.toLowerCase().includes(onSearchText.toLowerCase()) || 
-                item.address?.toLowerCase().includes(onSearchText.toLowerCase());
+        return item.parentTradingAccountUuid?.toLowerCase().includes(onSearchText.toLowerCase()) || 
+                item.email?.toLowerCase().includes(onSearchText.toLowerCase());
       });
       setData([...filteredObject]);
     } else {
@@ -141,11 +127,6 @@ const Withdraw = ({ history }) => {
   // onChange function for searching key
   const onFilterChange = (e) => {
     setSearchText(e.target.value);    
-  };
-
-  // function to declare the state change
-  const onActionText = (e) => {
-    setActionText(e.value);
   };
 
   // function to select all the items of the table
@@ -166,31 +147,17 @@ const Withdraw = ({ history }) => {
     setData([...newData]);
   };
 
-  // function to fire actions after dropdowm select
-  const onActionClick = (e) => {
-    if (actionText === "Reject") {
-      let newData = data.map((item) => {
-        if (item.check === true) item.status = "Rejected";
-        return item;
-      });
-      setData([...newData]);
-    } else if (actionText === "Delete") {
-      let newData;
-      newData = data.filter((item) => item.check !== true);
-      setData([...newData]);
-    }
-  };
-
   // function to change to approve property for an item
   const onApproveClick = (id) => {
     let newData = data;
     let index = newData.findIndex((item) => item._id === id);
-    newData[index].status = "Approved";
+    newData[index].ibStatus = "Approved";
     console.log(newData);
     setData([...newData]);
-    axios.post(`${process.env.REACT_APP_API_SERVER}/api/other/withdraw`, { id, status: "Approved"})
+    axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/update-ib-status`, { id, ibStatus: "Approved"})
     .then(res => {
       console.log(res);
+      toast.success("IB request approved successfully");
     })
     .catch(e => {
       console.log(e);
@@ -201,9 +168,10 @@ const Withdraw = ({ history }) => {
   const onRejectClick = (id) => {
     let newData = data;
     let index = newData.findIndex((item) => item._id === id);
-    newData[index].status = "Rejected";
-    axios.post(`${process.env.REACT_APP_API_SERVER}/api/other/withdraw`, { id, status: "Rejected" })
+    newData[index].ibStatus = "Declined";
+    axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/update-ib-status`, { id, ibStatus: "Declined" })
     .then(res => {
+      toast.success("IB request declined successfully");
       console.log(res);
     })
     .catch(e => {
@@ -231,14 +199,14 @@ const Withdraw = ({ history }) => {
 
   return (
     <React.Fragment>
-      <Head title="Withdraw Requests"></Head>
+      <Head title="IB Clients"></Head>
       <Content>
         <BlockHead size="sm">
           <BlockBetween>
             <BlockHeadContent>
-              <BlockTitle page>Withdraw Requests</BlockTitle>
+              <BlockTitle page>IB Clients</BlockTitle>
               <BlockDes className="text-soft">
-                <p>You have total {data.length} Withdraw Requests.</p>
+                <p>You have total {data.length} IB Clients(Pending, Approved and Declined).</p>
               </BlockDes>
             </BlockHeadContent>
             <BlockHeadContent>
@@ -257,42 +225,6 @@ const Withdraw = ({ history }) => {
           <DataTable className="card-stretch">
             <div className="card-inner position-relative card-tools-toggle">
               <div className="card-title-group">
-                {/* <div className="card-tools">
-                  <div className="form-inline flex-nowrap gx-3">
-                    <div className="form-wrap">
-                      <RSelect
-                        options={bulkActionKycOptions}
-                        className="w-130px"
-                        placeholder="Bulk Action"
-                        onChange={(e) => onActionText(e)}
-                      />
-                    </div>
-                    <div className="btn-wrap">
-                      <span className="d-none d-md-block">
-                        <Button
-                          color="light"
-                          outline
-                          disabled={actionText === "" ? true : false}
-                          className="btn-dim"
-                          onClick={() => onActionClick()}
-                        >
-                          Apply
-                        </Button>
-                      </span>
-                      <span className="d-md-none">
-                        <Button
-                          color="light"
-                          outline
-                          disabled={actionText === "" ? true : false}
-                          className="btn-dim btn-icon"
-                          onClick={() => onActionClick()}
-                        >
-                          <Icon name="arrow-right"></Icon>
-                        </Button>
-                      </span>
-                    </div>
-                  </div>
-                </div> */}
                 <div className="card-tools mr-n1">
                   <ul className="btn-toolbar gx-1">
                     <li>
@@ -322,65 +254,6 @@ const Withdraw = ({ history }) => {
                                 <Icon name="arrow-left"></Icon>
                               </Button>
                             </li>
-                            {/* <li>
-                              <UncontrolledDropdown>
-                                <DropdownToggle tag="a" className="btn btn-trigger btn-icon dropdown-toggle">
-                                  <div className="dot dot-primary"></div>
-                                  <Icon name="filter-alt"></Icon>
-                                </DropdownToggle>
-                                <DropdownMenu
-                                  right
-                                  className="filter-wg dropdown-menu-xl"
-                                  style={{ overflow: "visible" }}
-                                >
-                                  <div className="dropdown-head">
-                                    <span className="sub-title dropdown-title">Advanced Filter</span>
-                                  </div>
-                                  <div className="dropdown-body dropdown-body-rg">
-                                    <Row className="gx-6 gy-3">
-                                      <Col size="6">
-                                        <FormGroup>
-                                          <label className="overline-title overline-title-alt">Doc Type</label>
-                                          <RSelect options={filterDoc} placeholder="Any Type" />
-                                        </FormGroup>
-                                      </Col>
-                                      <Col size="6">
-                                        <FormGroup>
-                                          <label className="overline-title overline-title-alt">Status</label>
-                                          <RSelect options={filterStatus} placeholder="Any Status" />
-                                        </FormGroup>
-                                      </Col>
-                                      <Col size="12">
-                                        <FormGroup>
-                                          <Button type="button" color="secondary">
-                                            Filter
-                                          </Button>
-                                        </FormGroup>
-                                      </Col>
-                                    </Row>
-                                  </div>
-                                  <div className="dropdown-foot between">
-                                    <a
-                                      className="clickable"
-                                      href="#reset"
-                                      onClick={(ev) => {
-                                        ev.preventDefault();
-                                      }}
-                                    >
-                                      Reset Filter
-                                    </a>
-                                    <a
-                                      href="#save"
-                                      onClick={(ev) => {
-                                        ev.preventDefault();
-                                      }}
-                                    >
-                                      Save Filter
-                                    </a>
-                                  </div>
-                                </DropdownMenu>
-                              </UncontrolledDropdown>
-                            </li> */}
                             <li>
                               <UncontrolledDropdown>
                                 <DropdownToggle tag="a" className="btn btn-trigger btn-icon dropdown-toggle">
@@ -472,7 +345,7 @@ const Withdraw = ({ history }) => {
                     <input
                       type="text"
                       className="border-transparent form-focus-none form-control"
-                      placeholder="Search by trading account, email address or wallet address"
+                      placeholder="Search by email address or trading account uuid"
                       value={onSearchText}
                       onChange={(e) => onFilterChange(e)}
                     />
@@ -499,30 +372,18 @@ const Withdraw = ({ history }) => {
                 <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "email"); }}>
                   <span>User</span>
                 </div>
-                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "tradingAccountId"); }}>
-                  <span>Trading Account Id</span>
+                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "phone"); }}>
+                  <span>Phone</span>
                 </div>
-                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "address"); }}>
-                  <span>Address</span>
+                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "accountUuid"); }}>
+                  <span>Account UUID</span>
                 </div>
-                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "amount"); }}>
-                  <span>Amount</span>
-                </div>
-                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "currency"); }}>
-                  <span>Currency</span>
-                </div>
-                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "method"); }}>
-                  <span>Withdraw Method</span>
-                </div>
-                <div className="nk-tb-col tb-col-lg" onClick={(e) => { onSortHeaderClick(e, "submittedAt"); }}>
-                  <span>Submitted</span>
-                </div>
-                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "status"); }}>
+                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "ibStatus"); }}>
                   <span>Status</span>
                 </div>
-                {/* <DataTableRow size="lg">
-                  <span>Checked by</span>
-                </DataTableRow> */}
+                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "parentTradingAccountUuid"); }}>
+                  <span>Parent Trading Account UUID</span>
+                </div>
                 <DataTableRow className="nk-tb-col-tools">&nbsp;</DataTableRow>
               </DataTableHead>
 
@@ -544,60 +405,32 @@ const Withdraw = ({ history }) => {
                           </div>
                         </DataTableRow>
                         <DataTableRow>
-                          <Link to={`${process.env.PUBLIC_URL}/withdraw_detail/${item._id}`}>
-                            <div className="user-card">
-                              <UserAvatar
-                                theme={"primary"}
-                                text={findUpper(item.email)}
-                                image={item.image}
-                              ></UserAvatar>
-                              <div className="user-info">
-                                <span className="tb-lead">
-                                  {item.email}{" "}
-                                  <span
-                                    className={`dot dot-${
-                                      (item.status === "Approved" || item.status === "DONE" )
-                                        ? "success"
-                                        : item.status === "Pending"
-                                        ? "info"
-                                        : "danger"
-                                    } d-md-none ml-1`}
-                                  ></span>
-                                </span>
-                                <span>{item.email}</span>
-                              </div>
+                          <div className="user-card">
+                            <UserAvatar
+                              theme={"primary"}
+                              text={findUpper(item.email)}
+                              image={item.image}
+                            ></UserAvatar>
+                            <div className="user-info">
+                              <span className="tb-lead">{item.fullname}{" "}</span>
+                              <span>{item.email}</span>
                             </div>
-                          </Link>
+                          </div>
                         </DataTableRow>
                         <DataTableRow size="mb">
-                          <span className="tb-lead-sub">{ item.tradingAccountId }</span>
+                          <span className="tb-lead-sub">{ item.phone }</span>
                         </DataTableRow>
                         <DataTableRow size="mb" >
-                          <span className="tb-lead-sub" style={{ overflowWrap: "anywhere"}}>{item.address}</span>
+                          <span className="tb-lead-sub" style={{ overflowWrap: "anywhere"}}>{item.accountUuid}</span>
                         </DataTableRow>
                         <DataTableRow size="mb">
-                          <span className="tb-lead-sub">{item.amount}</span>
+                          <span className="tb-lead-sub">{item.ibStatus}</span>
                         </DataTableRow>
                         <DataTableRow size="md">
-                            <span className="tb-lead-sub">{item.currency}</span>
-                        </DataTableRow>
-                        <DataTableRow size="md">
-                            <span className="tb-lead-sub">{item.method}</span>
-                        </DataTableRow>
-                        <DataTableRow size="lg">
-                          <span className="tb-date">{ new Date(item.submittedAt).toLocaleString() }</span>
-                        </DataTableRow>
-                        <DataTableRow size="md">
-                          <span
-                            className={`tb-status text-${
-                              (item.status === "Approved" || item.status === "DONE") ? "success" : item.status === "Pending" ? "info" : "danger"
-                            }`}
-                          >
-                            {item.status}
-                          </span>
+                            <span className="tb-lead-sub">{item.parentTradingAccountUuid}</span>
                         </DataTableRow>
                         {
-                          item.status !== "DONE" &&
+                          item.ibStatus !== "Approved" &&
                           <DataTableRow className="nk-tb-col-tools">
                           <ul className="nk-tb-actions gx-1">
                             <li>
@@ -683,7 +516,7 @@ const Withdraw = ({ history }) => {
                 />
               ) : (
                 <div className="text-center">
-                  <span className="text-silent">No data found</span>
+                  <span className="text-silent">There are not IB Client.</span>
                 </div>
               )}
             </div>
@@ -693,4 +526,4 @@ const Withdraw = ({ history }) => {
     </React.Fragment>
   );
 };
-export default Withdraw;
+export default BIClient;
