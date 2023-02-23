@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Content from "../../../layout/content/Content";
 import Head from "../../../layout/head/Head";
+import { Link } from "react-router-dom";
 import {
   Modal,
   ModalBody,
@@ -382,9 +383,9 @@ const BIClient = ({ history }) => {
                   <span>Status</span>
                 </div>
                 <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "parentTradingAccountUuid"); }}>
-                  <span>Parent Trading Account UUID</span>
+                  <span>Parent Trading Account ID</span>
                 </div>
-                <DataTableRow className="nk-tb-col-tools">&nbsp;</DataTableRow>
+                {/* <DataTableRow className="nk-tb-col-tools">&nbsp;</DataTableRow> */}
               </DataTableHead>
 
               {currentItems.length > 0
@@ -405,17 +406,19 @@ const BIClient = ({ history }) => {
                           </div>
                         </DataTableRow>
                         <DataTableRow>
-                          <div className="user-card">
-                            <UserAvatar
-                              theme={"primary"}
-                              text={findUpper(item.email)}
-                              image={item.image}
-                            ></UserAvatar>
-                            <div className="user-info">
-                              <span className="tb-lead">{item.fullname}{" "}</span>
-                              <span>{item.email}</span>
+                          <Link to={`${process.env.PUBLIC_URL}/ib-become-detail/${item._id}`}>
+                            <div className="user-card">
+                              <UserAvatar
+                                theme={"primary"}
+                                text={findUpper(item.email)}
+                                image={item.image}
+                              ></UserAvatar>
+                              <div className="user-info">
+                                <span className="tb-lead">{item.fullname}{" "}</span>
+                                <span>{item.email}</span>
+                              </div>
                             </div>
-                          </div>
+                          </Link>
                         </DataTableRow>
                         <DataTableRow size="mb">
                           <span className="tb-lead-sub">{ item.phone }</span>
@@ -427,9 +430,9 @@ const BIClient = ({ history }) => {
                           <span className="tb-lead-sub">{item.ibStatus}</span>
                         </DataTableRow>
                         <DataTableRow size="md">
-                            <span className="tb-lead-sub">{item.parentTradingAccountUuid}</span>
+                            <span className="tb-lead-sub">{item.parentTradingAccountID}</span>
                         </DataTableRow>
-                        {
+                        {/* {
                           item.ibStatus !== "Approved" &&
                           <DataTableRow className="nk-tb-col-tools">
                           <ul className="nk-tb-actions gx-1">
@@ -498,7 +501,7 @@ const BIClient = ({ history }) => {
                             </li>
                           </ul>
                         </DataTableRow>
-                        }
+                        } */}
                       
                       </DataTableItem>
                     );

@@ -13,6 +13,7 @@ import DepositReport from "../pages/pre-built/deposit/DepositReport";
 import WithdrawDetail from "../pages/pre-built/withdraw/WithdrawDetail";
 import Wallet from "../pages/pre-built/wallet/Wallet"; 
 import BIClients from "../pages/pre-built/bi/BIClient";
+import BIClientDetail from "../pages/pre-built/bi/BIClientDetail";
 import Administrator from "../pages/pre-built/administrator/Administrator";
 
 const Pages = () => {
@@ -33,6 +34,7 @@ const Pages = () => {
         <Route exact path={`${process.env.PUBLIC_URL}/withdraw_detail/:id`} component={WithdrawDetail}></Route>
         <Route exact path={`${process.env.PUBLIC_URL}/wallet`} component={Wallet}></Route>
         <Route exact path={`${process.env.PUBLIC_URL}/ib-become`} component={BIClients}></Route>
+        <Route exact path={`${process.env.PUBLIC_URL}/ib-become-detail/:id`} component={BIClientDetail}></Route>
 
         <Route // context api added
           exact

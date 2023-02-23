@@ -1,3 +1,12 @@
 .nk-tb-head>div {
     cursor: pointer;
 }
+
+.c_select {
+    width: 100%;
+    min-width: 250px;
+    height: 35px;
+    padding-left: 5px;
+    border: 1px solid rgba(200, 200, 200, 0.9);
+    border-radius: 3px !important;
+}
