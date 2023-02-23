@@ -35,5 +35,11 @@ const menu = [
     active: false,
     link: "/wallet",
   },
+  {
+    icon: "list",
+    text: "IB Clients",
+    active: false,
+    link: "/ib-become",
+  },
 ];
 export default menu;
