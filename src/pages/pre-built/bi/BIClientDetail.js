@@ -22,7 +22,7 @@ const BIClientDetail = ({ match, history }) => {
 
   const [clientDetail, setClientDetail] = useState();
   const [clientAccounts, setClientAccounts] = useState();
-  const [parentTradingAccountUuid, setParentTradingAccountUuid] = useState("");
+  const [ibParentTradingAccountUuid, setIbParentTradingAccountUuid] = useState("");
   const [addNoteModal, setAddNoteModal] = useState(false);
   const [addNoteText, setAddNoteText] = useState("");
 
@@ -34,7 +34,7 @@ const BIClientDetail = ({ match, history }) => {
       let accountUuid = res.data.accountUuid;
       setClientDetail(res.data);
       
-      axios.get(`${process.env.REACT_APP_API_SERVER}/api/other/client_wallets`, { params: { accountUuid: accountUuid }})
+      axios.get(`${process.env.REACT_APP_API_SERVER}/api/other/client_wallets`, { params: { isDemo: false, accountUuid: accountUuid }})
       .then(res => {
         console.log("IB client trading accounts: ", res.data);
         setClientAccounts(res.data);
@@ -44,16 +44,16 @@ const BIClientDetail = ({ match, history }) => {
   }, []);
 
   const changeTradingAccount = (e) => {
-    setParentTradingAccountUuid( e.target.value ); 
+    setIbParentTradingAccountUuid( e.target.value ); 
   }
 
   const onApproveClick = () => {
-    if ( parentTradingAccountUuid === "" ) {
+    if ( ibParentTradingAccountUuid === "" ) {
       toast.warn("Please select parent trading account!");
       return;
     }
     const id = match.params.id;
-    axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/update-ib-status`, { id, ibStatus: "Approved", parentTradingAccountUuid: parentTradingAccountUuid, decline_reason: ""})
+    axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/update-ib-status`, { id, ibStatus: "Approved", ibParentTradingAccountUuid: ibParentTradingAccountUuid, decline_reason: ""})
     .then(res => {
       history.push("/ib-become");
       console.log(res);
@@ -177,7 +177,7 @@ const BIClientDetail = ({ match, history }) => {
                     <li className="data-item">
                       <div className="data-col">
                         <div className="data-label">Parent Trading Account</div>
-                        <div className="data-value">{clientDetail?.parentTradingAccountUuid}</div>
+                        <div className="data-value">{clientDetail?.ibParentTradingAccountUuid}</div>
                       </div> 
                     </li>
                     }
