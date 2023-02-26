@@ -84,9 +84,11 @@ const BIClient = ({ history }) => {
         sortedData = defaultData.sort((a, b) => a.accountUuid.localeCompare(b.accountUuid));
       } else if ( sortKind === "ibStatus" ) {
         sortedData = defaultData.sort((a, b) => a.ibStatus.localeCompare(b.ibStatus));
-      } else if ( sortKind === "parentTradingAccountUuid" ) {
-        sortedData = defaultData.sort((a, b) => a.tradingAccountId.localeCompare(b.parentTradingAccountUuid));
-      }     
+      } else if ( sortKind === "ibParentTradingAccountId" ) {
+        sortedData = defaultData.sort((a, b) => a.ibParentTradingAccountId.localeCompare(b.ibParentTradingAccountId));
+      } else if ( sortKind === "ibSubmittedAt" ) {
+        sortedData = defaultData.sort((a, b) => a.ibSubmittedAt.localeCompare(b.ibSubmittedAt));
+      }  
       setData([...sortedData]);
     } else if (sortOrder === "desc") {
       let sortedData = [];
@@ -98,8 +100,10 @@ const BIClient = ({ history }) => {
         sortedData = defaultData.sort((a, b) => b.accountUuid.localeCompare(a.accountUuid));
       } else if ( sortKind === "ibStatus" ) {
         sortedData = defaultData.sort((a, b) => b.ibStatus.localeCompare(a.ibStatus));
-      } else if ( sortKind === "parentTradingAccountUuid" ) {
-        sortedData = defaultData.sort((a, b) => b.parentTradingAccountUuid.localeCompare(a.parentTradingAccountUuid));
+      } else if ( sortKind === "ibParentTradingAccountId" ) {
+        sortedData = defaultData.sort((a, b) => b.ibParentTradingAccountId.localeCompare(a.ibParentTradingAccountId));
+      } else if ( sortKind === "ibSubmittedAt" ) {
+        sortedData = defaultData.sort((a, b) => b.ibSubmittedAt.localeCompare(a.ibSubmittedAt));
       } 
       setData([...sortedData]);
     }
@@ -382,8 +386,11 @@ const BIClient = ({ history }) => {
                 <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "ibStatus"); }}>
                   <span>Status</span>
                 </div>
-                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "parentTradingAccountUuid"); }}>
-                  <span>Parent Trading Account ID</span>
+                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "ibParentTradingAccountId"); }}>
+                  <span>IB Account</span>
+                </div>
+                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "ibSubmittedAt"); }}>
+                  <span>IB Request Datetime</span>
                 </div>
                 {/* <DataTableRow className="nk-tb-col-tools">&nbsp;</DataTableRow> */}
               </DataTableHead>
@@ -430,7 +437,10 @@ const BIClient = ({ history }) => {
                           <span className="tb-lead-sub">{item.ibStatus}</span>
                         </DataTableRow>
                         <DataTableRow size="md">
-                            <span className="tb-lead-sub">{item.parentTradingAccountID}</span>
+                            <span className="tb-lead-sub"><strong>{item.ibParentTradingAccountId}</strong></span>
+                        </DataTableRow>
+                        <DataTableRow size="mb">
+                          <span className="tb-lead-sub">{new Date(item.ibSubmittedAt).toLocaleString()}</span>
                         </DataTableRow>
                         {/* {
                           item.ibStatus !== "Approved" &&

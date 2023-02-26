@@ -50,7 +50,10 @@ const KycListRegular = ({ history }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemPerPage, setItemPerPage] = useState(10);
   const [sort, setSortState] = useState("");
+  const [sortKind, setSortKind] = useState("submittedAt");
+  const [sortOrder, setSortOrder] = useState("desc");
   const dispatch = useDispatch();
+
   // Sorting data
   const sortFunc = (params) => {
     let defaultData = data;
@@ -72,6 +75,42 @@ const KycListRegular = ({ history }) => {
     })
 
   }, [])
+
+  useEffect(() => {
+    let defaultData = data;
+    if (sortOrder === "asc") {
+      let sortedData = [];
+      if ( sortKind === "email" ) {
+        sortedData = defaultData.sort((a, b) => a.email.localeCompare(b.email));
+      } else if ( sortKind === "docType" ) {
+        sortedData = defaultData.sort((a, b) => a.docType.localeCompare(b.docType));
+      } else if ( sortKind === "submittedAt" ) {
+        sortedData = defaultData.sort((a, b) => a.submittedAt.localeCompare(b.submittedAt));
+      } else if ( sortKind === "verification_status" ) {
+        sortedData = defaultData.sort((a, b) => a.verification_status.localeCompare(b.verification_status));
+      }       
+      setData([...sortedData]);
+    } else if (sortOrder === "desc") {
+      let sortedData = [];
+      if ( sortKind === "email" ) {
+        sortedData = defaultData.sort((a, b) => b.email.localeCompare(a.email));
+      } else if ( sortKind === "docType" ) {
+        sortedData = defaultData.sort((a, b) => b.docType.localeCompare(a.docType));
+      } else if ( sortKind === "submittedAt" ) {
+        sortedData = defaultData.sort((a, b) => b.submittedAt.localeCompare(a.submittedAt));
+      } else if ( sortKind === "verification_status" ) {
+        sortedData = defaultData.sort((a, b) => b.verification_status.localeCompare(a.verification_status));
+      } 
+      setData([...sortedData]);
+    }
+  }, [sortKind, sortOrder]);
+
+  // sort param change function 
+  const onSortHeaderClick = (e, kind) => {
+    if ( kind === sortKind ) setSortOrder(sortOrder==="desc"?"asc":"desc");
+    setSortKind(kind);        
+  }
+
   // Changing state value when searching name
   useEffect(() => {
     let kycData = originalData;
@@ -447,25 +486,24 @@ const KycListRegular = ({ history }) => {
                     <label className="custom-control-label" htmlFor="uid_1"></label>
                   </div>
                 </DataTableRow>
-                <DataTableRow>
+                <div className="nk-tb-col" onClick={(e) => { onSortHeaderClick(e, "email"); }}>
                   <span>User</span>
-                </DataTableRow>
-                <DataTableRow size="mb">
+                </div>
+                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "docType"); }}>
                   <span>Doc Type</span>
-                </DataTableRow>
-                <DataTableRow size="md">
+                </div>
+                <div className="nk-tb-col tb-col-mb">
                   <span>Documents</span>
-                </DataTableRow>
-                <DataTableRow size="lg">
+                </div>
+                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "submittedAt"); }}>
                   <span>Submitted</span>
-                </DataTableRow>
-                <DataTableRow size="md">
+                </div>
+                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "verification_status"); }}>
                   <span>Status</span>
-                </DataTableRow>
-                {/* <DataTableRow size="lg">
-                  <span>Checked by</span>
-                </DataTableRow> */}
-                <DataTableRow className="nk-tb-col-tools">&nbsp;</DataTableRow>
+                </div>
+                <div className="nk-tb-col tb-col-mb">
+                  &nbsp;
+                </div>
               </DataTableHead>
 
               {currentItems.length > 0
