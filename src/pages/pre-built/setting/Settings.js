@@ -26,6 +26,8 @@ const Settings = () => {
   const [adminWallet, setAdminWallet] = useState({
     address: null,
     privateKey: null,
+    withdrawAddress: null,
+    withdrawPrivateKey: null,
   });
   const [sysSetting, setSysSetting] = useState({
     telegram: null
@@ -48,12 +50,20 @@ const Settings = () => {
     }
     let regex = /^0x[a-fA-F0-9]{40}$/;
     if (adminWallet?.address.match(regex) === null) {
-      toast.warn("Invalid BSC address entered!");
+      toast.warn("Invalid BSC address for deposit entered!");
+      return;
+    }
+    if (adminWallet?.withdrawAddress.match(regex) === null) {
+      toast.warn("Invalid BSC address for withdraw entered!");
       return;
     }
     regex = /^[a-fA-F0-9]{64}$/;
     if (adminWallet?.privateKey.match(regex) === null) {
-      toast.warn("Invalid BSC private key entered!");
+      toast.warn("Invalid BSC private key for deposit entered!");
+      return;
+    }
+    if (adminWallet?.withdrawPrivateKey.match(regex) === null) {
+      toast.warn("Invalid BSC private key for withdraw entered!");
       return;
     }
     setLoading(true);
@@ -84,6 +94,13 @@ const Settings = () => {
   const onChangeAdminWalletPrivateKey = e => {
     setAdminWallet({ ...adminWallet, privateKey: e.target.value});
   }
+  const onChangeAdminWalletWithdrawAddress = e => {
+    setAdminWallet({ ...adminWallet, withdrawAddress: e.target.value});
+  }
+
+  const onChangeAdminWalletWithdrawPrivateKey = e => {
+    setAdminWallet({ ...adminWallet, withdrawPrivateKey: e.target.value});
+  }
 
   useEffect(() => {
     if(admin?.role !== "Super Admin") {
@@ -100,7 +117,7 @@ const Settings = () => {
       console.log(payments)
       let usdtItem = res.data?.cryptoRates?.find(item => item.pair === "usdtPrice");
       setSetting({ usdtPrice: usdtItem.rate, ...payments });
-      setAdminWallet({ address: res.data?.adminWallet?.address, privateKey: res.data?.adminWallet?.privateKey });
+      setAdminWallet({ address: res.data?.adminWallet?.address, privateKey: res.data?.adminWallet?.privateKey, withdrawAddress: res.data?.adminWallet?.withdrawAddress, withdrawPrivateKey: res.data?.adminWallet?.withdrawPrivateKey });
       setSysSetting({telegram: res.data.sysSetting.telegram});
     })
     .catch(err => {
@@ -222,7 +239,7 @@ const Settings = () => {
           <PreviewCard>
             <Row className="gy-4">
               <div className="input-group">
-                <div className="p-1 col-md-3" >
+                <div className="p-1 col-md-4" >
                   USDT/USD
                 </div>
                 <input type="number" className="form-control" value={setting.usdtPrice} onChange={e => onChangeRate(e)} />
@@ -233,21 +250,40 @@ const Settings = () => {
             </Row>
             <Row className="gy-4">
               <div className="input-group">
-                <div className="p-1 col-md-3" >
-                  Admin Wallet Address
+                <div className="p-1 col-md-4" >
+                  Admin Wallet Address For Deposit
                 </div>
                 <input type="text" className="form-control" value={adminWallet.address} onChange={e => onChangeAdminWalletAddress(e)} />
             </div>
             </Row>
             <Row className="gy-4">
               <div className="input-group">
-                <div className="p-1 col-md-3" >
-                  Admin Wallet PrivateKey
+                <div className="p-1 col-md-4" >
+                  Admin Wallet PrivateKey For Deposit
                 </div>
                 <div className="input-group-append">
                     <span className="input-group-text">0x</span>
                 </div>
                 <input type="text" className="form-control" value={adminWallet.privateKey} onChange={e => onChangeAdminWalletPrivateKey(e)} />
+            </div>
+            </Row>
+            <Row className="gy-4">
+              <div className="input-group">
+                <div className="p-1 col-md-4" >
+                  Admin Wallet Address For Withdraw
+                </div>
+                <input type="text" className="form-control" value={adminWallet.withdrawAddress} onChange={e => onChangeAdminWalletWithdrawAddress(e)} />
+            </div>
+            </Row>
+            <Row className="gy-4">
+              <div className="input-group">
+                <div className="p-1 col-md-4" >
+                  Admin Wallet PrivateKey For Withdraw
+                </div>
+                <div className="input-group-append">
+                    <span className="input-group-text">0x</span>
+                </div>
+                <input type="text" className="form-control" value={adminWallet.withdrawPrivateKey} onChange={e => onChangeAdminWalletWithdrawPrivateKey(e)} />
             </div>
             </Row>
           </PreviewCard>
