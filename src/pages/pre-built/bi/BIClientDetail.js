@@ -190,7 +190,7 @@ const BIClientDetail = ({ match, history }) => {
                             <option disabled selected>Select Trading Account</option>
                           { clientAccounts && clientAccounts.map((account) => {
                             return (
-                                <option value={account.tradingAccountUuid}>{account.tradingAccountId}</option>
+                                <option value={account.uuid}>{account.login}</option>
                               );
                             })
                           } 
