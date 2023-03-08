@@ -66,7 +66,6 @@ const Wallet = ({ history }) => {
   };
   useEffect(() => {
     dispatch(setChecking(true));
-    setChecking
     axios.get(`${process.env.REACT_APP_API_SERVER}/api/other/wallets`)
     .then(res => {
       dispatch(setChecking(false));

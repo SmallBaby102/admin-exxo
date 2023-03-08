@@ -95,7 +95,6 @@ const Administrator = ({ history }) => {
       return;
     }
     dispatch(setChecking(true));
-    setChecking
     axios.get(`${process.env.REACT_APP_API_SERVER}/api/auth/admins`)
     .then(res => {
       dispatch(setChecking(false));
