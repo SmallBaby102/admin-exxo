@@ -40,12 +40,8 @@ const SocialAccountDetail = ({ match, history }) => {
   }
 
   const onApproveClick = () => {
-    if ( ibParentTradingAccountUuid === "" ) {
-      toast.warn("Please select parent trading account!");
-      return;
-    }
     const id = match.params.id;
-    axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/update-ib-status`, { id, sStatus: "Approved", ibParentTradingAccountUuid: ibParentTradingAccountUuid, decline_reason: ""})
+    axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/social-account-info`, { id, sStatus: "Approved", decline_reason: ""})
     .then(res => {
       history.push("/ib-become");
       console.log(res);
@@ -121,7 +117,7 @@ const SocialAccountDetail = ({ match, history }) => {
                         <div className="data-label">Has Web Site?:</div>
                         <div className="data-value">{accountDetail?.hasWebsite? "Yes" :"No"}</div>
                       </div>
-                    </li>
+                    </li>\
                     <li className="data-item">
                       <div className="data-col">
                         <div className="data-label">Will Share Trading Performance on other social Trading Platform?</div>
