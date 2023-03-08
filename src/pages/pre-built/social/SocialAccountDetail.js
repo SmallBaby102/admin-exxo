@@ -19,32 +19,24 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const SocialAccountDetail = ({ match, history }) => {
-
-  const [clientDetail, setClientDetail] = useState();
+  const [accountDetail, setAccountDetail] = useState();
   const [clientAccounts, setClientAccounts] = useState();
-  const [ibParentTradingAccountUuid, setIbParentTradingAccountUuid] = useState("");
   const [addNoteModal, setAddNoteModal] = useState(false);
   const [addNoteText, setAddNoteText] = useState("");
 
   useEffect(() => {
     const id = match.params.id;
-    axios.get(`${process.env.REACT_APP_API_SERVER}/api/user/ib-client-detail`, { params: { id: id }})
+    axios.get(`${process.env.REACT_APP_API_SERVER}/api/user/social-account-info`, { params: { id: id }})
     .then(res => {
-      console.log("IB client detail: ", res.data);
+      console.log("social account detail: ", res.data.socialAccountInfo);
       let accountUuid = res.data.accountUuid;
-      setClientDetail(res.data);
-      
-      axios.get(`${process.env.REACT_APP_API_SERVER}/api/other/client_wallets`, { params: { isDemo: false, accountUuid: accountUuid }})
-      .then(res => {
-        console.log("IB client trading accounts: ", res.data);
-        setClientAccounts(res.data);
-      });
-      
+      setAccountDetail(res.data.socialAccountInfo);
+
     });
   }, []);
 
   const changeTradingAccount = (e) => {
-    setIbParentTradingAccountUuid( e.target.value ); 
+
   }
 
   const onApproveClick = () => {
@@ -53,7 +45,7 @@ const SocialAccountDetail = ({ match, history }) => {
       return;
     }
     const id = match.params.id;
-    axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/update-ib-status`, { id, ibStatus: "Approved", ibParentTradingAccountUuid: ibParentTradingAccountUuid, decline_reason: ""})
+    axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/update-ib-status`, { id, sStatus: "Approved", ibParentTradingAccountUuid: ibParentTradingAccountUuid, decline_reason: ""})
     .then(res => {
       history.push("/ib-become");
       console.log(res);
@@ -75,7 +67,7 @@ const SocialAccountDetail = ({ match, history }) => {
       return;
     }
 
-    axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/update-ib-status`, { id, ibStatus: "Declined", decline_reason: addNoteText })
+    axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/social-account-info`, { id, sStatus: "Declined", decline_reason: addNoteText })
     .then(res => {
       history.push("/ib-become");
       console.log(res);
@@ -87,6 +79,8 @@ const SocialAccountDetail = ({ match, history }) => {
     setAddNoteText("");
   }
 
+  console.log("account detail information -------",accountDetail);
+
   return (
     <React.Fragment>
       <Head title="IB Client Details - Admin"></Head>
@@ -95,11 +89,11 @@ const SocialAccountDetail = ({ match, history }) => {
             <BlockBetween className="g-3">
               <BlockHeadContent>
                 <BlockTitle page>
-                  IB Request Client Infomation
+                  Social Trading Account Infomation
                 </BlockTitle>
               </BlockHeadContent>
               <BlockHeadContent>
-                <Link to={`${process.env.PUBLIC_URL}/ib-become`}>
+                <Link to={`${process.env.PUBLIC_URL}/social-become`}>
                   <Button color="light" outline className="bg-white d-none d-sm-inline-flex">
                     <Icon name="arrow-left"></Icon>
                     <span>Back</span>
@@ -117,89 +111,72 @@ const SocialAccountDetail = ({ match, history }) => {
               <Col lg="12">
                 <BlockHead>
                   <BlockHeadContent>
-                    {/* <BlockTitle tag="h5">Applicant Information</BlockTitle> */}
-                    <p>IB Request Clinet info, email, Account Uuid, phone, address, etc...</p>
+                    <p>Soical Trading Account Info, email, Account Uuid, etc...</p>
                   </BlockHeadContent>
                 </BlockHead>
                 <Card className="card-bordered">
                   <ul className="data-list is-compact">
                     <li className="data-item">
                       <div className="data-col">
-                        <div className="data-label">Full Name</div>
-                        <div className="data-value">{clientDetail?.fullname}</div>
+                        <div className="data-label">Has Web Site?:</div>
+                        <div className="data-value">{accountDetail?.hasWebsite? "Yes" :"No"}</div>
                       </div>
                     </li>
                     <li className="data-item">
                       <div className="data-col">
-                        <div className="data-label">Client Email</div>
-                        <div className="data-value">{clientDetail?.email}</div>
+                        <div className="data-label">Will Share Trading Performance on other social Trading Platform?</div>
+                        <div className="data-value"> { accountDetail?.shareTradingPerformance? "Yes" :"No" }</div>
                       </div>
                     </li>
                     <li className="data-item">
                       <div className="data-col">
-                        <div className="data-label">Phone Number</div>
-                        <div className="data-value">{clientDetail?.phone}</div>
+                        <div className="data-label">How to Promote Services?</div>
+                        <div className="data-value">{accountDetail?.promoteContent}</div>
+                      </div>
+                    </li>
+                    
+                    <li className="data-item">
+                      <div className="data-col">
+                        <div className="data-label">Has client Base?:</div>
+                        <div className="data-value">{accountDetail?.hasClientBase? "Yes" :"No"}</div>
+                      </div>
+                    </li>
+                   
+                    <li className="data-item">
+                      <div className="data-col">
+                        <div className="data-label">Trading Instrument to be interesting:</div>
+                        <div className="data-value">{accountDetail?.tradingInstrument}</div>
                       </div>
                     </li>
                     <li className="data-item">
                       <div className="data-col">
-                        <div className="data-label">Address</div>
-                        <div className="data-value text-soft">{clientDetail?.city + ", " + clientDetail?.state + ", " + clientDetail?.country}</div>
+                        <div className="data-label">Social Trading Account: </div>
+                        <div className="data-value text-soft">{accountDetail?.tradingAccountId}</div>
                       </div>
                     </li>
+                    
                     <li className="data-item">
                       <div className="data-col">
-                        <div className="data-label">IB Status</div>
-                        <div className="data-value"><strong>{clientDetail?.ibStatus}</strong></div>
-                      </div>
-                    </li>
-                    <li className="data-item">
-                      <div className="data-col">
-                        <div className="data-label">IB Link</div>
-                        <div className="data-value">{clientDetail?.IBLink}</div>
+                        <div className="data-label">Incentive Fee Percentage</div>
+                        <div className="data-value">{accountDetail?.incentiveFeePercentage}</div>
                       </div> 
                     </li>
-                    { clientDetail?.ibStatus === "Declined" && 
                     <li className="data-item">
                       <div className="data-col">
-                        <div className="data-label">Decline Reason</div>
-                        <div className="data-value"><i>{clientDetail?.IBDeclineReason}</i></div>
-                      </div> 
+                        <div className="data-label"> Status</div>
+                        <div className="data-value"><strong>{accountDetail?.sStatus}</strong></div>
+                      </div>
                     </li>
-                    }
+                    { accountDetail?.sStatus === "Declined" && 
                     <li className="data-item">
                       <div className="data-col">
-                        <div className="data-label">Created Datetime</div>
-                        <div className="data-value">{clientDetail?.submittedAt}</div>
-                      </div> 
-                    </li>
-                    { clientDetail?.ibStatus === "Approved" && 
-                    <li className="data-item">
-                      <div className="data-col">
-                        <div className="data-label">Parent Trading Account</div>
-                        <div className="data-value">{clientDetail?.ibParentTradingAccountUuid}</div>
-                      </div> 
-                    </li>
-                    }
-                    { clientDetail?.ibStatus === "Pending" && 
-                    <li className="data-item">
-                      <div className="data-col">
-                        <div className="data-label">Parent Trading Account</div>
-                        <div className="">
-                          <select className="c_select" onChange={e => changeTradingAccount(e)}>
-                            <option disabled selected>Select Trading Account</option>
-                          { clientAccounts && clientAccounts.map((account) => {
-                            return (
-                                <option value={account.uuid}>{account.login}</option>
-                              );
-                            })
-                          } 
-                        </select>
-                        </div>
+                        <div className="sdata-label">Decline Reason</div>
+                        <div className="data-value"><i>{accountDetail?.IBDeclineReason}</i></div>
                       </div> 
                     </li>
                     }
-                    { clientDetail && clientDetail.ibStatus === "Pending"  && ( 
+                    
+                    { accountDetail && accountDetail.sStatus === "Pending"  && ( 
                     <li className="data-item">
                       <div className="">
                         <Button type="button" color="primary" onClick={e => onApproveClick()}>

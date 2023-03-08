@@ -54,7 +54,7 @@ const SocialAccountList = ({ history }) => {
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_SERVER}/api/user/social-account-all`)
     .then(res => {
-      console.log("data", res.data)
+      console.log("social account information", res.data)
       setData(res.data);
       setOriginalData(res.data);
     });
@@ -81,27 +81,25 @@ const SocialAccountList = ({ history }) => {
       } else if ( sortKind === "accountUuid" ) {
         sortedData = defaultData.sort((a, b) => a.accountUuid.localeCompare(b.accountUuid));
       } else if ( sortKind === "sStatus" ) {
-        sortedData = defaultData.sort((a, b) => a.ibStatus.localeCompare(b.ibStatus));
+        sortedData = defaultData.sort((a, b) => a.sStatus.localeCompare(b.sStatus));
       } else if ( sortKind === "Wallet" ) {
-        sortedData = defaultData.sort((a, b) => a.ibParentTradingAccountId.localeCompare(b.ibParentTradingAccountId));
-      } else if ( sortKind === "ibSubmittedAt" ) {
-        sortedData = defaultData.sort((a, b) => a.ibSubmittedAt.localeCompare(b.ibSubmittedAt));
+        sortedData = defaultData.sort((a, b) => a.tradingAccountId.localeCompare(b.tradingAccountId));
+      } else if ( sortKind === "createAt" ) {
+        sortedData = defaultData.sort((a, b) => a.createAt.localeCompare(b.createAt));
       }  
       setData([...sortedData]);
     } else if (sortOrder === "desc") {
       let sortedData = [];
       if ( sortKind === "email" ) {
         sortedData = defaultData.sort((a, b) => b.email.localeCompare(a.email));
-      } else if ( sortKind === "phone" ) {
-        sortedData = defaultData.sort((a, b) => b.phone.localeCompare(a.phone));
       } else if ( sortKind === "accountUuid" ) {
         sortedData = defaultData.sort((a, b) => b.accountUuid.localeCompare(a.accountUuid));
-      } else if ( sortKind === "ibStatus" ) {
-        sortedData = defaultData.sort((a, b) => b.ibStatus.localeCompare(a.ibStatus));
-      } else if ( sortKind === "ibParentTradingAccountId" ) {
-        sortedData = defaultData.sort((a, b) => b.ibParentTradingAccountId.localeCompare(a.ibParentTradingAccountId));
-      } else if ( sortKind === "ibSubmittedAt" ) {
-        sortedData = defaultData.sort((a, b) => b.ibSubmittedAt.localeCompare(a.ibSubmittedAt));
+      } else if ( sortKind === "sStatus" ) {
+        sortedData = defaultData.sort((a, b) => b.sStatus.localeCompare(a.sStatus));
+      } else if ( sortKind === "Wallet" ) {
+        sortedData = defaultData.sort((a, b) => b.tradingAccountId.localeCompare(a.tradingAccountId));
+      } else if ( sortKind === "createdAt" ) {
+        sortedData = defaultData.sort((a, b) => b.createAt.localeCompare(a.createAt));
       } 
       setData([...sortedData]);
     }
@@ -154,10 +152,10 @@ const SocialAccountList = ({ history }) => {
   const onApproveClick = (id) => {
     let newData = data;
     let index = newData.findIndex((item) => item._id === id);
-    newData[index].ibStatus = "Approved";
+    newData[index].SStatus = "Approved";
     console.log(newData);
     setData([...newData]);
-    axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/update-ib-status`, { id, ibStatus: "Approved"})
+    axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/social-account-info`, { id, SStatus: "Approved"})
     .then(res => {
       console.log(res);
       toast.success("IB request approved successfully");
@@ -171,8 +169,8 @@ const SocialAccountList = ({ history }) => {
   const onRejectClick = (id) => {
     let newData = data;
     let index = newData.findIndex((item) => item._id === id);
-    newData[index].ibStatus = "Declined";
-    axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/update-ib-status`, { id, ibStatus: "Declined" })
+    newData[index].SStatus = "Declined";
+    axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/social-account-info`, { id, SStatus: "Declined" })
     .then(res => {
       toast.success("IB request declined successfully");
       console.log(res);
@@ -200,16 +198,16 @@ const SocialAccountList = ({ history }) => {
   // Change Page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  return (
+    console.log("current Items: "  ,currentItems);
+   return (
     <React.Fragment>
-      <Head title=""></Head>
       <Content>
         <BlockHead size="sm">
           <BlockBetween>
             <BlockHeadContent>
-              <BlockTitle page>IB Clients</BlockTitle>
+              <BlockTitle page>Social Trading Accounts</BlockTitle>
               <BlockDes className="text-soft">
-                <p>You have total {data.length} IB Clients(Pending, Approved and Declined).</p>
+                <p>You have total {data.length} Social Trading Account(Pending, Approved and Declined).</p>
               </BlockDes>
             </BlockHeadContent>
             <BlockHeadContent>
@@ -223,143 +221,142 @@ const SocialAccountList = ({ history }) => {
             </BlockHeadContent>
           </BlockBetween>
         </BlockHead>
-
         <Block>
           <DataTable className="card-stretch">
             <div className="card-inner position-relative card-tools-toggle">
-              <div className="card-title-group">
-                <div className="card-tools mr-n1">
-                  <ul className="btn-toolbar gx-1">
-                    <li>
-                      <Button
-                        onClick={(ev) => {
-                          ev.preventDefault();
-                          toggle();
-                        }}
-                        className="btn-icon search-toggle toggle-search"
-                      >
-                        <Icon name="search"></Icon>
-                      </Button>
-                    </li>
-                    <li className="btn-toolbar-sep"></li>
-                    <li>
-                      <div className="toggle-wrap">
+                <div className="card-title-group">
+                  <div className="card-tools mr-n1">
+                    <ul className="btn-toolbar gx-1">
+                      <li>
                         <Button
-                          className={`btn-icon btn-trigger toggle ${tablesm ? "active" : ""}`}
-                          onClick={() => updateTableSm(true)}
+                          onClick={(ev) => {
+                            ev.preventDefault();
+                            toggle();
+                          }}
+                          className="btn-icon search-toggle toggle-search"
                         >
-                          <Icon name="menu-right"></Icon>
+                          <Icon name="search"></Icon>
                         </Button>
-                        <div className={`toggle-content ${tablesm ? "content-active" : ""}`}>
-                          <ul className="btn-toolbar gx-1">
-                            <li className="toggle-close">
-                              <Button className="btn-icon btn-trigger toggle" onClick={() => updateTableSm(false)}>
-                                <Icon name="arrow-left"></Icon>
-                              </Button>
-                            </li>
-                            <li>
-                              <UncontrolledDropdown>
-                                <DropdownToggle tag="a" className="btn btn-trigger btn-icon dropdown-toggle">
-                                  <Icon name="setting"></Icon>
-                                </DropdownToggle>
-                                <DropdownMenu right className="dropdown-menu-xs">
-                                  <ul className="link-check">
-                                    <li>
-                                      <span>Show</span>
-                                    </li>
-                                    <li className={itemPerPage === 10 ? "active" : ""}>
-                                      <DropdownItem
-                                        tag="a"
-                                        href="#dropdownitem"
-                                        onClick={(ev) => {
-                                          ev.preventDefault();
-                                          setItemPerPage(10);
-                                        }}
-                                      >
-                                        10
-                                      </DropdownItem>
-                                    </li>
-                                    <li className={itemPerPage === 15 ? "active" : ""}>
-                                      <DropdownItem
-                                        tag="a"
-                                        href="#dropdownitem"
-                                        onClick={(ev) => {
-                                          ev.preventDefault();
-                                          setItemPerPage(15);
-                                        }}
-                                      >
-                                        15
-                                      </DropdownItem>
-                                    </li>
-                                  </ul>
-                                  <ul className="link-check">
-                                    <li>
-                                      <span>Order</span>
-                                    </li>
-                                    <li className={sort === "dsc" ? "active" : ""}>
-                                      <DropdownItem
-                                        tag="a"
-                                        href="#dropdownitem"
-                                        onClick={(ev) => {
-                                          ev.preventDefault();
-                                          setSortState("dsc");
-                                          sortFunc("dsc");
-                                        }}
-                                      >
-                                        DESC
-                                      </DropdownItem>
-                                    </li>
-                                    <li className={sort === "asc" ? "active" : ""}>
-                                      <DropdownItem
-                                        tag="a"
-                                        href="#dropdownitem"
-                                        onClick={(ev) => {
-                                          ev.preventDefault();
-                                          setSortState("asc");
-                                          sortFunc("asc");
-                                        }}
-                                      >
-                                        ASC
-                                      </DropdownItem>
-                                    </li>
-                                  </ul>
-                                </DropdownMenu>
-                              </UncontrolledDropdown>
-                            </li>
-                          </ul>
+                      </li>
+                      <li className="btn-toolbar-sep"></li>
+                      <li>
+                        <div className="toggle-wrap">
+                          <Button
+                            className={`btn-icon btn-trigger toggle ${tablesm ? "active" : ""}`}
+                            onClick={() => updateTableSm(true)}
+                          >
+                            <Icon name="menu-right"></Icon>
+                          </Button>
+                          <div className={`toggle-content ${tablesm ? "content-active" : ""}`}>
+                            <ul className="btn-toolbar gx-1">
+                              <li className="toggle-close">
+                                <Button className="btn-icon btn-trigger toggle" onClick={() => updateTableSm(false)}>
+                                  <Icon name="arrow-left"></Icon>
+                                </Button>
+                              </li>
+                              <li>
+                                <UncontrolledDropdown>
+                                  <DropdownToggle tag="a" className="btn btn-trigger btn-icon dropdown-toggle">
+                                    <Icon name="setting"></Icon>
+                                  </DropdownToggle>
+                                  <DropdownMenu right className="dropdown-menu-xs">
+                                    <ul className="link-check">
+                                      <li>
+                                        <span>Show</span>
+                                      </li>
+                                      <li className={itemPerPage === 10 ? "active" : ""}>
+                                        <DropdownItem
+                                          tag="a"
+                                          href="#dropdownitem"
+                                          onClick={(ev) => {
+                                            ev.preventDefault();
+                                            setItemPerPage(10);
+                                          }}
+                                        >
+                                          10
+                                        </DropdownItem>
+                                      </li>
+                                      <li className={itemPerPage === 15 ? "active" : ""}>
+                                        <DropdownItem
+                                          tag="a"
+                                          href="#dropdownitem"
+                                          onClick={(ev) => {
+                                            ev.preventDefault();
+                                            setItemPerPage(15);
+                                          }}
+                                        >
+                                          15
+                                        </DropdownItem>
+                                      </li>
+                                    </ul>
+                                    <ul className="link-check">
+                                      <li>
+                                        <span>Order</span>
+                                      </li>
+                                      <li className={sort === "dsc" ? "active" : ""}>
+                                        <DropdownItem
+                                          tag="a"
+                                          href="#dropdownitem"
+                                          onClick={(ev) => {
+                                            ev.preventDefault();
+                                            setSortState("dsc");
+                                            sortFunc("dsc");
+                                          }}
+                                        >
+                                          DESC
+                                        </DropdownItem>
+                                      </li>
+                                      <li className={sort === "asc" ? "active" : ""}>
+                                        <DropdownItem
+                                          tag="a"
+                                          href="#dropdownitem"
+                                          onClick={(ev) => {
+                                            ev.preventDefault();
+                                            setSortState("asc");
+                                            sortFunc("asc");
+                                          }}
+                                        >
+                                          ASC
+                                        </DropdownItem>
+                                      </li>
+                                    </ul>
+                                  </DropdownMenu>
+                                </UncontrolledDropdown>
+                              </li>
+                            </ul>
+                          </div>
                         </div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div className={`card-search search-wrap ${!onSearch && "active"}`}>
-                <div className="card-body">
-                  <div className="search-content">
-                    <Button
-                      onClick={() => {
-                        setSearchText("");
-                        toggle();
-                      }}
-                      className="search-back btn-icon toggle-search"
-                    >
-                      <Icon name="arrow-left"></Icon>
-                    </Button>
-                    <input
-                      type="text"
-                      className="border-transparent form-focus-none form-control"
-                      placeholder="Search by email address or trading account uuid"
-                      value={onSearchText}
-                      onChange={(e) => onFilterChange(e)}
-                    />
-                    <Button className="search-submit btn-icon">
-                      <Icon name="search"></Icon>
-                    </Button>
+                      </li>
+                    </ul>
                   </div>
                 </div>
-              </div>
+                <div className={`card-search search-wrap ${!onSearch && "active"}`}>
+                  <div className="card-body">
+                    <div className="search-content">
+                      <Button
+                        onClick={() => {
+                          setSearchText("");
+                          toggle();
+                        }}
+                        className="search-back btn-icon toggle-search"
+                      >
+                        <Icon name="arrow-left"></Icon>
+                      </Button>
+                      <input
+                        type="text"
+                        className="border-transparent form-focus-none form-control"
+                        placeholder="Search by email address or trading account uuid"
+                        value={onSearchText}
+                        onChange={(e) => onFilterChange(e)}
+                      />
+                      <Button className="search-submit btn-icon">
+                        <Icon name="search"></Icon>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
             </div>
-            <DataTableBody>
+              <DataTableBody>
               <DataTableHead>
                 <DataTableRow className="nk-tb-col-check">
                   <div className="custom-control custom-control-sm custom-checkbox notext">
@@ -375,76 +372,58 @@ const SocialAccountList = ({ history }) => {
                 <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "email"); }}>
                   <span>User</span>
                 </div>
-                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "phone"); }}>
-                  <span>Phone</span>
-                </div>
                 <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "accountUuid"); }}>
                   <span>Account UUID</span>
                 </div>
-                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "ibStatus"); }}>
+                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "sStatus"); }}>
                   <span>Status</span>
                 </div>
-                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "ibParentTradingAccountId"); }}>
-                  <span>IB Account</span>
+                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "SubmittedAt"); }}>
+                  <span>Application Datetime</span>
                 </div>
-                <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "ibSubmittedAt"); }}>
-                  <span>IB Request Datetime</span>
-                </div>
-                {/* <DataTableRow className="nk-tb-col-tools">&nbsp;</DataTableRow> */}
               </DataTableHead>
-
-              {currentItems.length > 0
-                ? currentItems.map((item) => {
-                    return (
-                      <DataTableItem key={item._id}>
-                        <DataTableRow className="nk-tb-col-check">
-                          <div className="custom-control custom-control-sm custom-checkbox notext">
-                            <input
-                              type="checkbox"
-                              className="custom-control-input form-control"
-                              defaultChecked={item.check}
-                              id={item._id + "uid1"}
-                              key={Math.random()}
-                              onChange={(e) => onSelectChange(e, item._id)}
-                            />
-                            <label className="custom-control-label" htmlFor={item._id + "uid1"}></label>
-                          </div>
-                        </DataTableRow>
-                        <DataTableRow>
-                          <Link to={`${process.env.PUBLIC_URL}/ib-become-detail/${item._id}`}>
-                            <div className="user-card">
-                              <UserAvatar
-                                theme={"primary"}
-                                text={findUpper(item.email)}
-                                image={item.image}
-                              ></UserAvatar>
-                              <div className="user-info">
-                                <span className="tb-lead">{item.fullname}{" "}</span>
-                                <span>{item.email}</span>
+                  {currentItems.length > 0
+                    ? currentItems.map((item) => {
+                        return (
+                          <DataTableItem>
+                            <DataTableRow className="nk-tb-col-check">
+                              <div className="custom-control custom-control-sm custom-checkbox notext">
+                                <input
+                                  type="checkbox"
+                                  className="custom-control-input form-control"
+                                  defaultChecked={item.check}
+                                  id={item._id + "uid1"}
+                                  key={Math.random()}
+                                  onChange={(e) => onSelectChange(e, item._id)}
+                                />
+                                <label className="custom-control-label" htmlFor={item._id + "uid1"}></label>
                               </div>
-                            </div>
-                          </Link>
-                        </DataTableRow>
-                        <DataTableRow size="mb">
-                          <span className="tb-lead-sub">{ item.phone }</span>
-                        </DataTableRow>
-                        <DataTableRow size="mb" >
-                          <span className="tb-lead-sub" style={{ overflowWrap: "anywhere"}}>{item.accountUuid}</span>
-                        </DataTableRow>
-                        <DataTableRow size="mb">
-                          <span className="tb-lead-sub">{item.ibStatus}</span>
-                        </DataTableRow>
-                        <DataTableRow size="md">
-                            <span className="tb-lead-sub"><strong>{item.ibParentTradingAccountId}</strong></span>
-                        </DataTableRow>
-                        <DataTableRow size="mb">
-                          <span className="tb-lead-sub">{new Date(item.ibSubmittedAt).toLocaleString()}</span>
-                        </DataTableRow>
-                      </DataTableItem>
-                    );
-                  })
-                : null}
-            </DataTableBody>
+                            </DataTableRow>
+                            <DataTableRow>
+                              <Link to={`${process.env.PUBLIC_URL}/social-become-detail/${item._id}`}>
+                                <div className="user-card">
+                                  <UserAvatar
+                                    theme={"primary"}
+                                    text={findUpper(item.email)}
+                                  ></UserAvatar>
+                                  <div className="user-info">
+                                    <span>{item.email}</span>
+                                  </div>
+                                </div>
+                              </Link>
+                            </DataTableRow>
+                            <DataTableRow size="mb" >
+                              <span className="tb-lead-sub" style={{ overflowWrap: "anywhere"}}>{item.accountUuid}</span>
+                            </DataTableRow>
+                            <DataTableRow size="mb">
+                              <span className="tb-lead-sub">{item.sStatus}</span>
+                            </DataTableRow>
+                            
+                          </DataTableItem>
+                        )
+                    })
+                    : null}
+              </DataTableBody>
             <div className="card-inner">
               {currentItems.length > 0 ? (
                 <PaginationComponent
@@ -456,13 +435,14 @@ const SocialAccountList = ({ history }) => {
                 />
               ) : (
                 <div className="text-center">
-                  <span className="text-silent">There are not IB Client.</span>
+                  <span className="text-silent">There are not Social Accounts.</span>
                 </div>
               )}
             </div>
           </DataTable>
         </Block>
       </Content>
+
     </React.Fragment>
   );
 };
