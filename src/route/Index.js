@@ -15,6 +15,8 @@ import Wallet from "../pages/pre-built/wallet/Wallet";
 import BIClients from "../pages/pre-built/bi/BIClient";
 import BIClientDetail from "../pages/pre-built/bi/BIClientDetail";
 import Administrator from "../pages/pre-built/administrator/Administrator";
+import SocialAccountDetail from "../pages/pre-built/social/SocialAccountDetail";
+import SocialAccountList from "../pages/pre-built/social/SocialAccountList";
 
 const Pages = () => {
   useLayoutEffect(() => {
@@ -35,6 +37,8 @@ const Pages = () => {
         <Route exact path={`${process.env.PUBLIC_URL}/wallet`} component={Wallet}></Route>
         <Route exact path={`${process.env.PUBLIC_URL}/ib-become`} component={BIClients}></Route>
         <Route exact path={`${process.env.PUBLIC_URL}/ib-become-detail/:id`} component={BIClientDetail}></Route>
+        <Route exact path={`${process.env.PUBLIC_URL}/social-become`} component={SocialAccountList}></Route>
+        <Route exact path={`${process.env.PUBLIC_URL}/social-become-detail/:id`} component={SocialAccountDetail}></Route>
 
         <Route // context api added
           exact

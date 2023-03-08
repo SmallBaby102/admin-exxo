@@ -41,5 +41,11 @@ const menu = [
     active: false,
     link: "/ib-become",
   },
+  {
+    icon: "list",
+    text: "Social Trading",
+    active: false,
+    link: "/social-become",
+  },
 ];
 export default menu;
