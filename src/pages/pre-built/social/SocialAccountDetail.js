@@ -25,8 +25,10 @@ const SocialAccountDetail = ({ match, history }) => {
   const [addNoteText, setAddNoteText] = useState("");
 
   useEffect(() => {
+
     const id = match.params.id;
-    axios.get(`${process.env.REACT_APP_API_SERVER}/api/user/social-account-info`, { params: { id: id }})
+
+    axios.get(`${process.env.REACT_APP_API_SERVER}/api/user/social-account-info-with-id`, { params: { id: id }})
     .then(res => {
       console.log("social account detail: ", res.data.socialAccountInfo);
       let accountUuid = res.data.accountUuid;
@@ -41,6 +43,8 @@ const SocialAccountDetail = ({ match, history }) => {
 
   const onApproveClick = () => {
     const id = match.params.id;
+
+    console.log("social account ID-----", id);
     axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/social-account-info`, { id, sStatus: "Approved", decline_reason: ""})
     .then(res => {
       history.push("/social-become");
