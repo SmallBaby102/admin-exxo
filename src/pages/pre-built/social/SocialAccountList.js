@@ -386,8 +386,8 @@ const SocialAccountList = ({ history }) => {
                     ? currentItems.map((item) => {
 
                         let createdAt = new Date(item.createAt );
-                        let dateTime = createdAt.getMonth() + "/"+ createdAt.getDay() + "/"+ createdAt.getFullYear; 
-                        dateTime += " " + createdAt.getHours() + ":" + createdAt.getMinutes()+":" + createdAt.getSeconds();
+
+
                         return (
                           <DataTableItem>
                             <DataTableRow className="nk-tb-col-check">
@@ -423,7 +423,7 @@ const SocialAccountList = ({ history }) => {
                               <span className="tb-lead-sub">{item.sStatus}</span>
                             </DataTableRow>
                             <DataTableRow size="mb">
-                              <span className="tb-lead-sub">{dateTime}</span>
+                              <span className="tb-lead-sub">{item.createAt}</span>
                             </DataTableRow>
                           </DataTableItem>
                         )
