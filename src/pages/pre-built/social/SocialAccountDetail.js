@@ -12,7 +12,7 @@ import {
   BlockTitle,
   Icon,
   Row,
-  Col
+  Col,
 } from "../../../components/Component";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -79,6 +79,10 @@ const SocialAccountDetail = ({ match, history }) => {
     setAddNoteText("");
   }
 
+  const checkBoxType = {
+    marginRight:"1rem", 
+    marginLeft:"1rem"
+  }
   console.log("account detail information -------",accountDetail);
 
   return (
@@ -121,7 +125,7 @@ const SocialAccountDetail = ({ match, history }) => {
                         <div className="data-label">Has Web Site?:</div>
                         <div className="data-value">{accountDetail?.hasWebsite? "Yes" :"No"}</div>
                       </div>
-                    </li>\
+                    </li>
                     <li className="data-item">
                       <div className="data-col">
                         <div className="data-label">Will Share Trading Performance on other social Trading Platform?</div>
@@ -145,13 +149,31 @@ const SocialAccountDetail = ({ match, history }) => {
                     <li className="data-item">
                       <div className="data-col">
                         <div className="data-label">Trading Instrument to be interesting:</div>
-                        <div className="data-value">{accountDetail?.tradingInstrument}</div>
+                        <div>
+                          <input className="p-3" type="checkbox" id="tradingInstrument1"  style={checkBoxType}
+                              checked = {accountDetail?.tradingInstruments & 0x01 ? true: false }
+                          />
+                          <label className="mt-1 form-text1" >
+                            Currencies
+                          </label>
+                          <input className="p-3" type="checkbox" id="tradingInstrument2" style={checkBoxType}
+                            checked = {accountDetail?.tradingInstruments & 0x02 ? true:false }
+                            
+                          /> 
+                          <label className="mt-1 form-text1" >
+                            CFD's
+                          </label>
+                          <input className="p-3" type="checkbox" id="tradingInstrument3"   style={checkBoxType}
+                            checked = {accountDetail?.tradingInstruments & 0x04 ? true:false }
+                          />
+                          <label className="mt-1 form-text1" >Precious Metal</label>
+                        </div>
                       </div>
                     </li>
                     <li className="data-item">
                       <div className="data-col">
                         <div className="data-label">Social Trading Account: </div>
-                        <div className="data-value text-soft">{accountDetail?.tradingAccountId}</div>
+                        <div className="data-value text-soft">{accountDetail?.tradingAccountForSocial}</div>
                       </div>
                     </li>
                     
