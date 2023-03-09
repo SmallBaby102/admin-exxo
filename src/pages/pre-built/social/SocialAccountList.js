@@ -379,7 +379,7 @@ const SocialAccountList = ({ history }) => {
                   <span>Status</span>
                 </div>
                 <div className="nk-tb-col tb-col-mb" onClick={(e) => { onSortHeaderClick(e, "SubmittedAt"); }}>
-                  <span>Application Datetime</span>
+                  <span>Application Date</span>
                 </div>
               </DataTableHead>
                   {currentItems.length > 0
@@ -418,7 +418,9 @@ const SocialAccountList = ({ history }) => {
                             <DataTableRow size="mb">
                               <span className="tb-lead-sub">{item.sStatus}</span>
                             </DataTableRow>
-                            
+                            <DataTableRow size="mb">
+                              <span className="tb-lead-sub">{item.createAt}</span>
+                            </DataTableRow>
                           </DataTableItem>
                         )
                     })
