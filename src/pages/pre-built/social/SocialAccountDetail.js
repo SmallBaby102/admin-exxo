@@ -69,7 +69,7 @@ const SocialAccountDetail = ({ match, history }) => {
 
     axios.post(`${process.env.REACT_APP_API_SERVER}/api/user/social-account-info`, { id, sStatus: "Declined", decline_reason: addNoteText })
     .then(res => {
-      history.push("/ib-become");
+      history.push("/social-become");
       console.log(res);
     })
     .catch(e => {
