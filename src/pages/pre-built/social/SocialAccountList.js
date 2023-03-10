@@ -387,7 +387,6 @@ const SocialAccountList = ({ history }) => {
 
                         let createdAt = new Date(item.createAt );
 
-
                         return (
                           <DataTableItem>
                             <DataTableRow className="nk-tb-col-check">

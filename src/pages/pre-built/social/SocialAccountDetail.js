@@ -198,7 +198,7 @@ const SocialAccountDetail = ({ match, history }) => {
                     </li>
                     }
                     
-                    { accountDetail && accountDetail.sStatus === "Pending"  && ( 
+                    { accountDetail && (accountDetail.sStatus === "Pending" || accountDetail.sStatus === "Declined")  && ( 
                     <li className="data-item">
                       <div className="">
                         <Button type="button" color="primary" onClick={e => onApproveClick()}>
